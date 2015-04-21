@@ -7,6 +7,10 @@
  "manifest_version": 2,
 
  "icons": {
+  "512": "images/icon512.png",
+  "128": "images/icon128.png",
+  "64": "images/icon64.png",
+  "32": "images/icon32.png",
   "16": "images/icon16.png"
  },
 
@@ -15,7 +19,10 @@
   "matches": ["*://*/*"],
   "run_at": "document_idle",
   "css": ["printQrcodes.css"],
-  "js": ["libraries/qrcodes/qrcode.min.js", "addQrcodes.js"]
+  "js": [
+   "libraries/qrcodes/qrcode.min.js",
+   "addQrcodes.js"
+  ]
  }],
 
  "options_page": "options.html",
@@ -25,7 +32,7 @@
  },
  "browser_action": {
   "default_title": "__MSG_displayQrcodeLabel__",
-  "default_icon": "images/icon16.png"
+  "default_icon": "images/iconAction.png"
  },
   "background": {
     "scripts": [
