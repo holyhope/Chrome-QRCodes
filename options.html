@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QRCodes options</title>
+<link rel="stylesheet" type="text/css" href="options.css" />
+</head>
+<body>
+	<h1 id="option-title">QRCodes options</h1>
+	<div class="block form-group">
+		<label for="auto-display" id="auto-display-label">Automatic
+			display</label> <input id="auto-display" type="checkbox" />
+	</div>
+	<div class="block form-group">
+		<label for="horizontal-position" id="horizontal-position-label">Position
+			horizontal</label> <select id="horizontal-position">
+			<option value="left" id="horizontal-position-left">left</option>
+			<option value="right" id="horizontal-position-right">right</option>
+		</select>
+	</div>
+	<div class="block form-group">
+		<label for="vertical-position" id="vertical-position-label">Position
+			vertical</label> <select id="vertical-position">
+			<option value="top" id="vertical-position-top">top</option>
+			<option value="bottom" id="vertical-position-bottom">bottom</option>
+		</select>
+	</div>
+	<div class="block form-group">
+		<label for="page-footer" id="page-footer-label">Display on
+			first page</label> <input id="page-footer" type="checkbox" />
+	</div>
+	<div class="block form-group">
+		<label for="size" id="size-label">Size</label> <input type="number"
+			id="size" min="30" step="1" />
+	</div>
+	<div class="block form-group">
+		<label for="color" id="color-label">Color</label> <input type="text"
+			id="color" class="color" />
+	</div>
+	<input type="button" id="save" value="Save" />
+
+	<script src="libraries/jscolor/jscolor.js"></script>
+	<script src="options.js"></script>
+</body>
+</html>

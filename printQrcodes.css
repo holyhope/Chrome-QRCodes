@@ -1,0 +1,15 @@
+#extension-qrcodes-qrcode {
+	background-color: #FFFFFF;
+	border-style: none;
+	display: none;
+	margin: 0;
+	padding: 5px;
+	position: absolute;
+	z-index: 9999999;
+}
+
+#extension-qrcodes-qrcode img {
+	border-style: none;
+	margin: 0;
+	padding: 0;
+}

@@ -1,0 +1,84 @@
+{
+ "appName": {
+  "message": "QRCodes",
+  "description": "The name of the application, displayed in the web store."
+ },
+ "appDescription": {
+  "message": "Thanks to this plugin you can easily go to original website from a sheet of paper paper. Add a qrcode to printed pages, you can choose its position and color.",
+  "description": "The description of the application, displayed in the web store."
+ },
+ 
+ "displayQrcodeLabel": {
+  "message": "Display qrcode on current page",
+  "description": "Label of button to display qrcode."
+ },
+
+ "optionTitle": {
+  "message": "QRCodes options",
+  "description": "Title of options page."
+ },
+ "optionSizeLabel": {
+  "message": "Size (in pixel)",
+  "description": "Label for size option."
+ },
+ "optionSizeTooSmallAlert": {
+  "message": "Small qrcodes may be unreadable.",
+  "description": "Warning displayed when user choose a small size."
+ },
+ "optionColorLabel": {
+  "message": "Color",
+  "description": "Label for color option."
+ },
+ "optionColorDefaultValue": {
+  "message": "automatic",
+  "description": "Value for automatic color (should not be a valid hexadecimal color)."
+ },
+ "optionAutoDisplayLabel": {
+  "message": "Automatically add on printed page",
+  "description": "Label for auto add option."
+ },
+ "optionColorAutomaticLabel": {
+  "message": "Automatic",
+  "description": "Label for automatic color link."
+ },
+ "optionColorTooLightAlert": {
+  "message": "Light qrcodes may be unreadable.",
+  "description": "Error displayed when user choose a light color."
+ },
+ "optionPageFooterLabel": {
+  "message": "Display on first page",
+  "description": "Label for page footer option: should qrcode be on the first page ?"
+ },
+ "optionVerticalPositionLabel": {
+  "message": "Vertical position",
+  "description": "Label for vertical position option."
+ },
+ "optionVerticalPositionTopValue": {
+  "message": "Top",
+  "description": "Value for top position in options page."
+ },
+ "optionVerticalPositionBottomValue": {
+  "message": "Bottom",
+  "description": "Value for bottom position in options page."
+ },
+ "optionHorizontalPositionLabel": {
+  "message": "Horizontal position",
+  "description": "Label for horizontal position option."
+ },
+ "optionHorizontalPositionLeftValue": {
+  "message": "Left",
+  "description": "Value for left position in options page."
+ },
+ "optionHorizontalPositionRightValue": {
+  "message": "Right",
+  "description": "Value for right position in options page."
+ },
+ "optionsSaved": {
+  "message": "Options saved",
+  "description": "Text displayed on options save."
+ },
+ "saveButton": {
+  "message": "Save",
+  "description": "Text of the save button in options page."
+ }
+}

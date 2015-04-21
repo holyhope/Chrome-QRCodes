@@ -1,0 +1,78 @@
+{
+ "appName": {
+  "message": "QRCodes",
+  "description": "Le nom de l'application, affiché sur le web store."
+ },
+ "appDescription": {
+  "message": "Grâce à cette extension vous pouvez aisément aller sur le site d'origine à partir d'une feuille de papier. Ajoute un qrcode sur les pages imprimées, vous pouvez choisir sa position et sa couleur.",
+  "description": "La description de l'application, affichée sur le web store."
+ },
+ "optionTitle": {
+  "message": "Options de QRCodes",
+  "description": "Titre de la page d'option."
+ },
+ "optionSizeLabel": {
+  "message": "Taille (en pixel)",
+  "description": "Intitulé pour le réglage de la taille."
+ },
+ "optionSizeTooSmallAlert": {
+  "message": "Les petits qrocdes peuvent être illisibles.",
+  "description": "Avertissement affiché lorsque l'utilisateur choisi une petite taille."
+ },
+ "optionColorLabel": {
+  "message": "Couleur",
+  "description": "Intitulé pour le réglage de la couleur."
+ },
+ "optionColorDefaultValue": {
+  "message": "automatique",
+  "description": "Valeur pour la couleur automatique (ne doit pas être une couleur hexadécimale valide)."
+ },
+ "optionColorAutomaticLabel": {
+  "message": "Automatique",
+  "description": "Intitulé du lien pour la couleur automatique."
+ },
+ "optionColorTooLightAlert": {
+  "message": "Les qrocdes de couleur claire peuvent être illisibles.",
+  "description": "Erreur affichée lorsque l'utilisateur choisi une couleur claire."
+ },
+ "optionAutoDisplayLabel": {
+  "message": "Ajout automatique à l'impression",
+  "description": "Intitulé pour l'option d'ajout automatique pour les pages imprimées."
+ },
+ "optionPageFooterLabel": {
+  "message": "Afficher en première page",
+  "description": "Intitulé pour l'option de pied de page: le qrcode doit-il être sur la prmière page ?"
+ },
+ "optionVerticalPositionLabel": {
+  "message": "Position verticale",
+  "description": "Intitulé pour le réglage de la position verticale."
+ },
+ "optionVerticalPositionTopValue": {
+  "message": "Haut",
+  "description": "Valeur pour la position en haut dans la page des options."
+ },
+ "optionVerticalPositionBottomValue": {
+  "message": "Bas",
+  "description": "Valeur pour la position en bas dans la page des options."
+ },
+ "optionHorizontalPositionLabel": {
+  "message": "Position horizontale",
+  "description": "Intitulé pour le réglage de la position horizontale."
+ },
+ "optionHorizontalPositionLeftValue": {
+  "message": "Gauche",
+  "description": "Valeur pour la position à gauche dans la page des options."
+ },
+ "optionHorizontalPositionRightValue": {
+  "message": "Droite",
+  "description": "Valeur pour la position à droite dans la page des options."
+ },
+ "optionsSaved": {
+  "message": "Réglages enregistrés",
+  "description": "Texte affiché lors de l'enregistrement des options."
+ },
+ "saveButton": {
+  "message": "Enregistrer",
+  "description": "Texte du bouton de sauvegarde sur la page des options."
+ }
+}
