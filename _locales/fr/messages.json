@@ -4,9 +4,15 @@
   "description": "Le nom de l'application, affiché sur le web store."
  },
  "appDescription": {
-  "message": "Grâce à cette extension vous pouvez aisément aller sur le site d'origine à partir d'une feuille de papier. Ajoute un qrcode sur les pages imprimées, vous pouvez choisir sa position et sa couleur.",
+  "message": "partagez facilement, à partir d'une feuille de papier, la page d'origine. Ajoute un qrcode sur les pages, vous pouvez choisir sa position et sa couleur.",
   "description": "La description de l'application, affichée sur le web store."
  },
+ 
+ "displayQrcodeLabel": {
+  "message": "Display qrcode on current page",
+  "description": "Label of button to display qrcode."
+ },
+
  "optionTitle": {
   "message": "Options de QRCodes",
   "description": "Titre de la page d'option."
@@ -18,6 +24,10 @@
  "optionSizeTooSmallAlert": {
   "message": "Les petits qrocdes peuvent être illisibles.",
   "description": "Avertissement affiché lorsque l'utilisateur choisi une petite taille."
+ },
+ "optionAutoDisplayLabel": {
+  "message": "Ajout automatique à l'impression",
+  "description": "Intitulé pour l'option d'ajout automatique pour les pages imprimées."
  },
  "optionColorLabel": {
   "message": "Couleur",
@@ -34,10 +44,6 @@
  "optionColorTooLightAlert": {
   "message": "Les qrocdes de couleur claire peuvent être illisibles.",
   "description": "Erreur affichée lorsque l'utilisateur choisi une couleur claire."
- },
- "optionAutoDisplayLabel": {
-  "message": "Ajout automatique à l'impression",
-  "description": "Intitulé pour l'option d'ajout automatique pour les pages imprimées."
  },
  "optionPageFooterLabel": {
   "message": "Afficher en première page",
@@ -67,10 +73,12 @@
   "message": "Droite",
   "description": "Valeur pour la position à droite dans la page des options."
  },
+
  "optionsSaved": {
   "message": "Réglages enregistrés",
   "description": "Texte affiché lors de l'enregistrement des options."
  },
+
  "saveButton": {
   "message": "Enregistrer",
   "description": "Texte du bouton de sauvegarde sur la page des options."
