@@ -43,11 +43,8 @@
 
  "incognito": "split",
  "permissions": [
-  "tabs",
   "activeTab",
-  "storage",
-  "http://*/*",
-  "https://*/*"
+  "storage"
  ],
  "homepage_url": "http://projects.coffeepot.fr/qrcodes-chrome",
  "offline_enabled": true

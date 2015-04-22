@@ -5,11 +5,26 @@
 	margin: 0;
 	padding: 5px;
 	position: absolute;
+	transition: opacity .7s ease-out; -webkit-transition : opacity .5s
+	ease-out;
 	z-index: 9999999;
+	-webkit-transition: opacity .5s ease-out;
+}
+
+#extension-qrcodes-qrcode:hover {
+	opacity: 0.2;
+	transition: opacity .7s ease-out;
+	-webkit-transition: opacity .5s ease-out;
 }
 
 #extension-qrcodes-qrcode img {
 	border-style: none;
 	margin: 0;
 	padding: 0;
+}
+
+@media not print {
+	#extension-qrcodes-qrcode {
+		position: fixed;
+	}
 }
