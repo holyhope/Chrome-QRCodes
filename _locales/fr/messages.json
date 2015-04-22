@@ -4,7 +4,7 @@
   "description": "Le nom de l'application, affiché sur le web store."
  },
  "appDescription": {
-  "message": "partagez facilement, à partir d'une feuille de papier, la page d'origine. Ajoute un qrcode sur les pages, vous pouvez choisir sa position et sa couleur.",
+  "message": "Partagez facilement, à partir d'une feuille de papier, la page d'origine. Ajoute un qrcode sur les pages, vous pouvez choisir sa position et sa couleur.",
   "description": "La description de l'application, affichée sur le web store."
  },
  
