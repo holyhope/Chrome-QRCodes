@@ -14,3 +14,4 @@ Extension for Google Chrome wich add a qrcode to pages.
 ## TODO
 
 * Add a reset button in option page.
+* Add transition on display and hide qrcodes.

@@ -39,10 +39,6 @@
   "message": "Ajout automatique à l'impression",
   "description": "Intitulé pour l'option d'ajout automatique pour les pages imprimées."
  },
- "optionPageFooterLabel": {
-  "message": "Afficher en première page",
-  "description": "Intitulé pour l'option de pied de page: le qrcode doit-il être sur la prmière page ?"
- },
  "optionVerticalPositionLabel": {
   "message": "Position verticale",
   "description": "Intitulé pour le réglage de la position verticale."

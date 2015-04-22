@@ -7,7 +7,6 @@ function getDefaultOptions() {
 	return {
 		size : '120',
 		color : false,
-		pageFooter : false,
 		autoDisplay : true,
 		verticalPosition : 'top',
 		horizontalPosition : 'right'

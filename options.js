@@ -137,7 +137,6 @@ function getDefaultOptions() {
 	return {
 		size : '120',
 		color : false,
-		pageFooter : false,
 		autoDisplay : true,
 		verticalPosition : 'top',
 		horizontalPosition : 'right'
@@ -170,8 +169,6 @@ function initI18nPage() {
 			.getMessage('optionColorLabel');
 	document.getElementById('auto-display-label').textContent = chrome.i18n
 			.getMessage('optionAutoDisplayLabel');
-	document.getElementById('page-footer-label').textContent = chrome.i18n
-			.getMessage('optionPageFooterLabel');
 	document.getElementById('vertical-position-label').textContent = chrome.i18n
 			.getMessage('optionVerticalPositionLabel');
 	document.getElementById('vertical-position-top').textContent = chrome.i18n
@@ -232,7 +229,6 @@ function restoreOptions() {
 						document.getElementById('color').color.minS = 0.5;
 						document.getElementById('color').color.required = false;
 						console.log(document.getElementById('color').color);
-						document.getElementById('page-footer').checked = items.pageFooter;
 						document.getElementById('auto-display').checked = items.autoDisplay;
 						document.getElementById('vertical-position').value = items.verticalPosition;
 						document.getElementById('horizontal-position').value = items.horizontalPosition;
@@ -255,7 +251,6 @@ function saveOptions() {
 	// Get new settings values
 	var size = getSizeValue();
 	var color = getColorValue();
-	var pageFooter = getPageFooterValue();
 	var autoDisplay = getAutoDisplayValue();
 	var verticalPosition = getVerticalPositionValue();
 	var horizontalPosition = getHorizontalPositionValue();
@@ -264,7 +259,6 @@ function saveOptions() {
 	chrome.storage.sync.set({
 		size : size,
 		color : color,
-		pageFooter : pageFooter,
 		autoDisplay : autoDisplay,
 		verticalPosition : verticalPosition,
 		horizontalPosition : horizontalPosition

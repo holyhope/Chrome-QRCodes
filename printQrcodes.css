@@ -3,23 +3,25 @@
 	border-style: none;
 	display: none;
 	margin: 0;
-	padding: 5px;
+	opacity: 1;
+	transition: opacity .35s ease-out;
+	-webkit-transition: opacity .35s ease-out;
+	overflow: hidden;
+	padding: 0;
 	position: absolute;
-	transition: opacity .7s ease-out; -webkit-transition : opacity .5s
-	ease-out;
+	transition:;
 	z-index: 9999999;
-	-webkit-transition: opacity .5s ease-out;
 }
 
 #extension-qrcodes-qrcode:hover {
-	opacity: 0.2;
-	transition: opacity .7s ease-out;
-	-webkit-transition: opacity .5s ease-out;
+	opacity: 0.25;
+	transition: opacity .35s ease-out;
+	-webkit-transition: opacity .35s ease-out;
 }
 
 #extension-qrcodes-qrcode img {
 	border-style: none;
-	margin: 0;
+	margin: 5px;
 	padding: 0;
 }
 
