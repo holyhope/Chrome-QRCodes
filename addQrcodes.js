@@ -18,10 +18,22 @@ function getDefaultOptions() {
  * Create container for qrcode in the dom.
  */
 function createQrcodeContainer() {
-	var qrcode = document.createElement('div');
+	// Check if container already exists
+	var qrcode = document.getElementById('extension-qrcodes-qrcode');
+	if (qrcode != null) {
+		return;
+	}
+	// Otherwise, create One
+	qrcode = document.createElement('div');
 	qrcode.id = 'extension-qrcodes-qrcode';
+	var bodies = document.getElementsByTagName('body');
+	// Check if it is a well structured dom.
+	if (bodies.length == 0) {
+		return;
+	}
+	// Put qrcode in the dom.
 	var body = document.getElementsByTagName('body')[0];
-	body.insertBefore(qrcode, body.childNodes[0]);
+	body.appendChild(qrcode);
 }
 createQrcodeContainer();
 
