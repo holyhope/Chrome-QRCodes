@@ -13,20 +13,43 @@ function getDefaultOptions() {
 	};
 }
 
-function init() {
-	var qrcode = document.createElement('div');
+/**
+ * Create container for qrcode in the dom.
+ */
+function createQrcodeContainer() {
+	// Check if container already exists
+	var qrcode = document.getElementById('extension-qrcodes-qrcode');
+	if (qrcode != null) {
+		return;
+	}
+	// Otherwise, create One
+	qrcode = document.createElement('div');
 	qrcode.id = 'extension-qrcodes-qrcode';
-	document.getElementsByTagName('body')[0].appendChild(qrcode);
+	var bodies = document.getElementsByTagName('body');
+	// Check if it is a well structured dom.
+	if (bodies.length == 0) {
+		return;
+	}
+	// Put qrcode in the dom.
+	var body = document.getElementsByTagName('body')[0];
+	body.appendChild(qrcode);
+}
+createQrcodeContainer();
 
-	var $args;
-	var autoDisplay;
-
+/**
+ * Set global variables thanks to stored settings.
+ */
+var $args;
+var autoDisplay;
+function initSettings() {
+	var qrcode = document.getElementById('extension-qrcodes-qrcode');
 	chrome.storage.sync.get(getDefaultOptions(), function(items) {
 		autoDisplay = items.autoDisplay;
 
 		args = {
 			width : items.size,
 			height : items.size,
+			useSVG : true,
 			colorDark : '#' + items.color,
 			colorLight : '#ffffff',
 			correctLevel : QRCode.CorrectLevel.H
@@ -45,33 +68,53 @@ function init() {
 		qrcode.style[items.verticalPosition] = '0px';
 		qrcode.style[items.horizontalPosition] = '0px';
 	});
+}
+initSettings();
 
+/**
+ * Display qrcode if autoDisplay is true.
+ */
+function displayIfAuto() {
+	var qrcode = document.getElementById('extension-qrcodes-qrcode');
+	if (autoDisplay && qrcode.style.display != 'block') {
+		qrcode.style.display = 'block';
+	}
+}
+
+/**
+ * Set print event.
+ */
+function initPrintEvents() {
 	var beforePrint = function() {
+		var qrcode = document.getElementById('extension-qrcodes-qrcode');
 		args.text = window.location.href;
-		new QRCode(qrcode, args);
-		window.onbeforeprint = beforePrint = function() {
-			if (autoDisplay && qrcode.style.display != 'block') {
-				qrcode.style.display = 'block';
-			}
-		};
-		beforePrint();
+		try {
+			new QRCode(qrcode, args);
+			window.onbeforeprint = displayIfAuto;
+			window.onbeforeprint();
+		} catch (e) {
+			qrcode.parentNode.removeChild(qrcode);
+			alert(chrome.i18n.getMessage('tooLongURL'));
+			//TODO replace alert with something better
+		}
 	};
+	window.onbeforeprint = beforePrint;
 
 	var afterPrint = function() {
+		var qrcode = document.getElementById('extension-qrcodes-qrcode');
 		qrcode.style.display = 'none';
 	}
+	window.onafterprint = afterPrint;
 
 	if (window.matchMedia) {
 		var mediaQueryList = window.matchMedia('print');
 		mediaQueryList.addListener(function(mql) {
 			if (mql.matches) {
-				beforePrint();
+				window.onbeforeprint();
 			} else {
-				afterPrint();
+				window.onafterprint();
 			}
 		});
 	}
-	window.onbeforeprint = beforePrint;
-	window.onafterprint = afterPrint;
 }
-init();
+initPrintEvents();

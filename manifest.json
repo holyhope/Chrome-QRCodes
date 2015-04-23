@@ -9,6 +9,7 @@
  "icons": {
   "512": "images/icon512.png",
   "128": "images/icon128.png",
+  "96": "images/icon96.png",
   "64": "images/icon64.png",
   "32": "images/icon32.png",
   "16": "images/icon16.png"
@@ -16,7 +17,9 @@
 
  "content_scripts": [{
   "all_frames": false,
-  "matches": ["*://*/*"],
+  "matches": [
+   "<all_urls>"
+  ],
   "run_at": "document_idle",
   "css": ["printQrcodes.css"],
   "js": [
@@ -43,9 +46,10 @@
 
  "incognito": "split",
  "permissions": [
+  "storage",
   "activeTab",
-  "storage"
+  "<all_urls>"
  ],
- "homepage_url": "http://projects.coffeepot.fr/qrcodes-chrome",
+ "homepage_url": "http://projects.coffeepot.fr/qrcodes/chrome",
  "offline_enabled": true
 }

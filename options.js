@@ -111,11 +111,9 @@ function getSizeValue() {
  */
 function getColorValue() {
 	var color = document.getElementById('color').value;
-	console.log(color);
 	if (!/^[0-9A-F]{6}$/i.test(color)) {
 		color = false;
 	}
-	console.log(color);
 	return color;
 }
 
@@ -228,7 +226,7 @@ function restoreOptions() {
 						}
 						document.getElementById('color').color.minS = 0.5;
 						document.getElementById('color').color.required = false;
-						console.log(document.getElementById('color').color);
+						document.getElementById('page-footer').checked = items.pageFooter;
 						document.getElementById('auto-display').checked = items.autoDisplay;
 						document.getElementById('vertical-position').value = items.verticalPosition;
 						document.getElementById('horizontal-position').value = items.horizontalPosition;

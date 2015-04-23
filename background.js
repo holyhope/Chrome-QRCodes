@@ -1,14 +1,39 @@
-chrome.browserAction.onClicked.addListener(function(tab) {
-	function callback() {
+/**
+ * Enable browserAction on update
+ */
+chrome.tabs.onUpdated.addListener(function(tabId) {
+	/**
+	 * Disable browserAction update if error
+	 */
+	function enableOrDisableOnError() {
 		if (chrome.runtime.lastError) {
-			var error = chrome.runtime.lastError;
-			console.log('Error: ' + error.message);
+			chrome.browserAction.disable(tabId);
 		} else {
-			console.log('QRCode displayed on ' + tab.url);
+			chrome.browserAction.enable(tabId);
+		}
+	}
+
+	// Test modify dom (needed for switchDisplay.js
+	chrome.tabs.executeScript({
+		code : 'document.getElementsByTagName(\'body\').innerHTML += \'\';'
+	}, enableOrDisableOnError);
+});
+
+/**
+ * Display QRCode in currentTab on browserAction click. Create one if does not
+ * exist.
+ */
+chrome.browserAction.onClicked.addListener(function(tab) {
+	/**
+	 * Disable browserAction update if error
+	 */
+	function disableOnError() {
+		if (chrome.runtime.lastError) {
+			chrome.browserAction.disable(tab.id);
 		}
 	}
 
 	chrome.tabs.executeScript({
 		file : 'switchDisplay.js'
-	}, callback);
+	}, disableOnError);
 });
