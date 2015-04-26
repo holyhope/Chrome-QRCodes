@@ -1,4 +1,117 @@
 /**
+ * Display a confirm box during waitTime milliseconds. Call callbackTrue if user
+ * click on Yes otherwise call callbackFalse at least waitTime after this
+ * method.
+ * 
+ * @param waitTime -
+ *            Time (milliseconds) before remove message.
+ * @param message -
+ *            Message to display in confirm box.
+ * @param callbackTrue -
+ *            Callback to call in case of yes.
+ * @param callbackFalse
+ *            (Optional) - Callback to call in case of no.
+ */
+function confirm(waitTime, message, callbackTrue, callbackFalse) {
+	/**
+	 * Sanitize arguments
+	 */
+	function sanitizeArgs() {
+		if (typeof callbackFalse == 'undefined') {
+			callbackFalse = function() {
+			};
+		}
+		var oldCallbackFalse = callbackFalse;
+		callbackFalse = function() {
+			var container = confirmBox.parentNode;
+			if (container != null) {
+				container.removeChild(confirmBox);
+				oldCallbackFalse();
+			}
+		}
+		var oldCallbackTrue = callbackTrue;
+		callbackTrue = function() {
+			var container = confirmBox.parentNode;
+			if (container != null) {
+				container.removeChild(confirmBox);
+				oldCallbackTrue();
+			}
+		}
+	}
+	sanitizeArgs();
+
+	var updateTimeInterval;
+
+	var confirmBox = document.createElement('div');
+	confirmBox.className = 'warning notices';
+	confirmBox.textContent = message;
+	confirmBox.style.display = 'block';
+
+	var inputsContainer = document.createElement('div');
+	inputsContainer.className = 'input-container';
+
+	/**
+	 * Create the <i>yes</i> input.
+	 * 
+	 * @return Input node.
+	 */
+	function createInputYes() {
+		var inputYes = document.createElement('input');
+		inputYes.type = 'button';
+		inputYes.value = chrome.i18n.getMessage('Yes');
+
+		inputYes.addEventListener('click', function() {
+			clearInterval(updateTimeInterval);
+			console.log('yes !');
+			callbackTrue();
+		});
+
+		return inputYes;
+	}
+
+	/**
+	 * Create the <i>no</i> input.
+	 * 
+	 * @return Input node.
+	 */
+	function createInputNo() {
+		var inputNo = document.createElement('input');
+		inputNo.type = 'button';
+		inputNo.value = chrome.i18n.getMessage('No');
+
+		var start = new Date().getTime();
+		function updateTime() {
+			var remaining = parseInt((start + waitTime - new Date().getTime()) / 1000);
+			inputNo.value = chrome.i18n.getMessage('No');
+			if (remaining <= 0) {
+				clearInterval(updateTimeInterval);
+				callbackFalse();
+			}
+			inputNo.value += ' (' + remaining + ')';
+		}
+		updateTimeInterval = setInterval(updateTime, 1000);
+		updateTime();
+
+		inputNo.addEventListener('click', function() {
+			clearInterval(updateTimeInterval);
+			console.log('no !');
+			callbackFalse();
+		});
+
+		return inputNo;
+	}
+	inputsContainer.appendChild(createInputNo());
+	inputsContainer.appendChild(createInputYes());
+
+	confirmBox.appendChild(inputsContainer);
+
+	// Add div in the dom.
+	var container = document.getElementById('option-title').parentNode;
+	container.insertBefore(confirmBox, container
+			.getElementsByClassName('block')[0]);
+}
+
+/**
  * Check color on input changes.
  */
 function checkColor() {
@@ -39,19 +152,6 @@ function checkSize() {
 	}
 }
 document.getElementById('size').addEventListener('change', checkSize);
-
-/**
- * Display pageFooter option on bottom vertical position selection.
- */
-function checkBottomVerticalPosition() {
-	if (this.value == 'bottom') {
-		document.getElementById('page-footer').parentNode.style.display = 'block';
-	} else {
-		document.getElementById('page-footer').parentNode.style.display = 'none';
-	}
-}
-document.getElementById('vertical-position').addEventListener('change',
-		checkBottomVerticalPosition);
 
 /**
  * get sanitized horizontal position value from the dom element.
@@ -181,6 +281,8 @@ function initI18nPage() {
 			.getMessage('optionHorizontalPositionRightValue');
 
 	// Control buttons
+	document.getElementById('reset').value = chrome.i18n
+			.getMessage('resetButton');
 	document.getElementById('save').value = chrome.i18n
 			.getMessage('saveButton');
 }
@@ -201,7 +303,8 @@ function initDomPage() {
 	});
 	document.getElementById('color').parentNode.appendChild(resetColorLink);
 
-	// Save input
+	// Control buttons
+	document.getElementById('reset').addEventListener('click', resetOptions);
 	document.getElementById('save').addEventListener('click', saveOptions);
 }
 document.addEventListener('DOMContentLoaded', initDomPage);
@@ -226,7 +329,6 @@ function restoreOptions() {
 						}
 						document.getElementById('color').color.minS = 0.5;
 						document.getElementById('color').color.required = false;
-						document.getElementById('page-footer').checked = items.pageFooter;
 						document.getElementById('auto-display').checked = items.autoDisplay;
 						document.getElementById('vertical-position').value = items.verticalPosition;
 						document.getElementById('horizontal-position').value = items.horizontalPosition;
@@ -269,14 +371,54 @@ function saveOptions() {
 			container.insertBefore(status, container
 					.getElementsByClassName('block')[0]);
 		}
-		status.className = 'updated';
+		status.className = 'updated notices';
 		status.textContent = chrome.i18n.getMessage('optionsSaved');
 		status.style.display = 'block';
 		setTimeout(function() {
 			status.style.display = 'none';
-		}, 850);
+		}, 1000);
 
 		// Display saved options
 		restoreOptions();
 	});
+}
+
+/**
+ * Reset settings using getDefaultOptions in chrome.storage.
+ */
+function resetOptions() {
+	confirm(
+			7500,
+			chrome.i18n.getMessage('confirmReset'),
+			function() {
+				chrome.storage.sync
+						.set(
+								getDefaultOptions(),
+								function() {
+									// Update status to let user know options
+									// were saved.
+									var status = document
+											.getElementById('status');
+									if (!status) {
+										status = document.createElement('div');
+										var container = document
+												.getElementById('option-title').parentNode;
+										container
+												.insertBefore(
+														status,
+														container
+																.getElementsByClassName('block')[0]);
+									}
+									status.className = 'updated notices';
+									status.textContent = chrome.i18n
+											.getMessage('optionsReseted');
+									status.style.display = 'block';
+									setTimeout(function() {
+										status.style.display = 'none';
+									}, 850);
+
+									// Display saved options
+									restoreOptions();
+								});
+			});
 }

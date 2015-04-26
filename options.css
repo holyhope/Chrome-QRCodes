@@ -14,11 +14,31 @@ label {
 	color: #DD4B39;
 }
 
-.updated {
-	background-color: #DDFFBB;
-	border: 1px solid #66C039;
-	color: #5AB030;
+.notices {
+	border-width: 1px;
+	border-style: solid;
 	display: block;
 	padding: 5px;
 	margin: 3px 0px 7px 0px;
+}
+
+.notices .input-container {
+	margin-top: 7px;
+	text-align: right;
+}
+
+.notices input {
+	margin: 0px 0px 0px 10px;
+}
+
+.warning {
+	background-color: #fff8df;
+	border-color: #ffc848;
+	color: #e6a000;
+}
+
+.updated {
+	background-color: #DDFFBB;
+	border-color: #66C039;
+	color: #5AB030;
 }

@@ -7,9 +7,10 @@
 	transition: opacity .35s ease-out;
 	-webkit-transition: opacity .35s ease-out;
 	overflow: hidden;
-	padding: 0;
+	padding: 5px;
 	position: absolute;
 	transition:;
+	word-wrap: normal;
 	z-index: 19999999999;
 }
 
@@ -21,7 +22,7 @@
 
 #extension-qrcodes-qrcode img {
 	border-style: none;
-	margin: 5px;
+	margin: 0;
 	padding: 0;
 }
 

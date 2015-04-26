@@ -8,13 +8,18 @@
   "description": "La description de l'application, affichée sur le web store."
  },
  
+ "installMessage": {
+  "message": "QRCodes need that you reload tabs before you can display qrcode.",
+  "description": "Alert displayed on instalaltion: user must reload tabs."
+ },
+ 
  "displayQrcodeLabel": {
-  "message": "Display qrcode on current page",
+  "message": "Affiche le qrcode de la page actuelle",
   "description": "Label of button to display qrcode."
  },
 
  "tooLongURL": {
-  "message": "Cannot create qrcode, adresse is too long.",
+  "message": "Impossible de créer le qrcode, l'adresse est trop longue.",
   "description": "Displayed as error when url is too long to being encoded in qrcode."
  },
 
@@ -79,11 +84,31 @@
   "description": "Valeur pour la position à droite dans la page des options."
  },
 
+ "confirmReset": {
+  "message": "Êtes vous sûr de vouloir remettre à zéro tous les réglages ?",
+  "description": "Message de confirmation avant de réinitialiser les options."
+ },
+
+ "Yes": {
+  "message": "Oui"
+ },
+ "No": {
+  "message": "Non"
+ },
+
+ "optionsReseted": {
+  "message": "Réglages réinitialisés",
+  "description": "Texte affiché lors de la remise à zéro des options."
+ },
  "optionsSaved": {
   "message": "Réglages enregistrés",
   "description": "Texte affiché lors de l'enregistrement des options."
  },
 
+ "resetButton": {
+  "message": "Réinitialiser",
+  "description": "Texte du bouton de réinitialisation sur la page des options."
+ },
  "saveButton": {
   "message": "Enregistrer",
   "description": "Texte du bouton de sauvegarde sur la page des options."

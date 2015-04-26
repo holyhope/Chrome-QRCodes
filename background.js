@@ -1,7 +1,4 @@
-/**
- * Enable browserAction on update
- */
-chrome.tabs.onUpdated.addListener(function(tabId) {
+(function() {
 	/**
 	 * Disable browserAction update if error
 	 */
@@ -13,27 +10,50 @@ chrome.tabs.onUpdated.addListener(function(tabId) {
 		}
 	}
 
-	// Test modify dom (needed for switchDisplay.js
-	chrome.tabs.executeScript({
-		code : 'document.getElementsByTagName(\'body\').innerHTML += \'\';'
-	}, enableOrDisableOnError);
-});
-
-/**
- * Display QRCode in currentTab on browserAction click. Create one if does not
- * exist.
- */
-chrome.browserAction.onClicked.addListener(function(tab) {
 	/**
-	 * Disable browserAction update if error
+	 * Enable/Disable browserAction on update
 	 */
-	function disableOnError() {
-		if (chrome.runtime.lastError) {
-			chrome.browserAction.disable(tab.id);
-		}
+	function enableDisableForTab(tabId) {
+		// Test modify dom (needed for switchDisplay.js
+		chrome.tabs.executeScript(tabId, {
+			code : 'document.getElementsByTagName(\'body\').innerHTML += \'\';'
+		}, enableOrDisableOnError);
 	}
+	chrome.tabs.onUpdated.addListener(enableDisableForTab);
 
-	chrome.tabs.executeScript({
-		file : 'switchDisplay.js'
-	}, disableOnError);
-});
+	/**
+	 * Enable or disable for each tabs already loaded.
+	 */
+	chrome.tabs.query({}, function(tabs) {
+		for (i in tabs) {
+			enableDisableForTab(tabs[i].id);
+		}
+	});
+
+	/**
+	 * Alert user that tabs must be reloaded to work after installation.
+	 */
+	chrome.runtime.onInstalled.addListener(function(details) {
+		var message = chrome.i18n.getMessage('installMessage');
+		alert(message);
+	});
+
+	/**
+	 * Display QRCode in currentTab on browserAction click. Create one if does
+	 * not exist.
+	 */
+	chrome.browserAction.onClicked.addListener(function(tab) {
+		/**
+		 * Disable browserAction update if error
+		 */
+		function disableOnError() {
+			if (chrome.runtime.lastError) {
+				chrome.browserAction.disable(tab.id);
+			}
+		}
+
+		chrome.tabs.executeScript({
+			code : 'switchDisplay();'
+		}, disableOnError);
+	});
+})();

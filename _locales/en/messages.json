@@ -8,9 +8,19 @@
   "description": "The description of the application, displayed in the web store."
  },
  
+ "installMessage": {
+  "message": "QRCodes need that you reload tabs before you can display qrcode.",
+  "description": "Alert displayed on instalaltion: user must reload tabs."
+ },
+ 
  "displayQrcodeLabel": {
   "message": "Display qrcode on current page",
   "description": "Label of button to display qrcode."
+ },
+
+ "tooLongURL": {
+  "message": "Cannot create qrcode, adresse is too long.",
+  "description": "Displayed as error when url is too long to being encoded in qrcode."
  },
 
  "optionTitle": {
@@ -74,11 +84,31 @@
   "description": "Value for right position in options page."
  },
 
+ "confirmReset": {
+  "message": "Are you sure you want to reset all settings ?",
+  "description": "Confirm message before reset options."
+ },
+
+ "Yes": {
+  "message": "Yes"
+ },
+ "No": {
+  "message": "No"
+ },
+
+ "optionsReseted": {
+  "message": "Options reseted",
+  "description": "Text displayed on options reset."
+ },
  "optionsSaved": {
   "message": "Options saved",
   "description": "Text displayed on options save."
  },
 
+ "resetButton": {
+  "message": "Reset",
+  "description": "Text of the reset button in options page."
+ },
  "saveButton": {
   "message": "Save",
   "description": "Text of the save button in options page."

@@ -1,52 +1,51 @@
 /**
- * get default values.
- * 
- * @returns Initial values.
+ * Used to create qrcodes.
  */
-function getDefaultOptions() {
-	return {
-		size : '120',
-		color : false,
-		autoDisplay : true,
-		verticalPosition : 'top',
-		horizontalPosition : 'right'
-	};
-}
-
+var qrcodeArguments;
 /**
- * Create container for qrcode in the dom.
+ * True if qrcode must be shown on print.
  */
-function createQrcodeContainer() {
-	// Check if container already exists
-	var qrcode = document.getElementById('extension-qrcodes-qrcode');
-	if (qrcode != null) {
-		return;
-	}
-	// Otherwise, create One
-	qrcode = document.createElement('div');
-	qrcode.id = 'extension-qrcodes-qrcode';
-	var bodies = document.getElementsByTagName('body');
-	// Check if it is a well structured dom.
-	if (bodies.length == 0) {
-		return;
-	}
-	// Put qrcode in the dom.
-	var body = document.getElementsByTagName('body')[0];
-	body.appendChild(qrcode);
-}
-createQrcodeContainer();
+var autoDisplayQrcode;
+var styleQrcode;
 
 /**
  * Set global variables thanks to stored settings.
  */
-var $args;
-var autoDisplay;
 function initSettings() {
-	var qrcode = document.getElementById('extension-qrcodes-qrcode');
-	chrome.storage.sync.get(getDefaultOptions(), function(items) {
-		autoDisplay = items.autoDisplay;
+	/**
+	 * Get color from meta node in dom.
+	 * 
+	 * @returns color or false if not exists.
+	 */
+	function getMetaColor() {
+		var metas = document.getElementsByTagName('meta');
+		for (var i = 0; i < metas.length; i++) {
+			if (metas[i].name == 'theme-color') {
+				return metas[i].content;
+			}
+		}
+		return false;
+	}
 
-		args = {
+	/**
+	 * get default values.
+	 * 
+	 * @returns Initial values.
+	 */
+	function getDefaultOptions() {
+		return {
+			size : '120',
+			color : false,
+			autoDisplay : true,
+			verticalPosition : 'top',
+			horizontalPosition : 'right'
+		};
+	}
+
+	chrome.storage.sync.get(getDefaultOptions(), function(items) {
+		autoDisplayQrcode = items.autoDisplay;
+
+		qrcodeArguments = {
 			width : items.size,
 			height : items.size,
 			useSVG : true,
@@ -55,28 +54,70 @@ function initSettings() {
 			correctLevel : QRCode.CorrectLevel.H
 		};
 		if (!items.color) {
-			var metas = document.getElementsByTagName('meta');
-			for (var i = 0; i < metas.length; i++) {
-				if (metas[i].name == 'theme-color') {
-					args.colorDark = items.color = metas[i].content;
-				}
-			}
+			var color = getMetaColor();
 			if (!items.color) {
-				args.colorDark = items.color = '#000000';
+				color = '#000000';
 			}
+			qrcodeArguments.colorDark = color;
 		}
-		qrcode.style[items.verticalPosition] = '0px';
-		qrcode.style[items.horizontalPosition] = '0px';
+
+		var size = (parseInt(items.size)) + 'px';
+		styleQrcode = {
+			position : {
+				vertical : items.verticalPosition,
+				horizontal : items.horizontalPosition
+			},
+			dimension : {
+				width : size,
+				height : size
+			}
+		};
 	});
 }
 initSettings();
 
 /**
- * Display qrcode if autoDisplay is true.
+ * Get qrcode container in the dom. Or create one if does not exists.
+ * 
+ * @returns valid qrcode container.
  */
-function displayIfAuto() {
-	var qrcode = document.getElementById('extension-qrcodes-qrcode');
-	if (autoDisplay && qrcode.style.display != 'block') {
+function getQrcodeContainer() {
+	// Check if container already exists
+	var qrcodeContainer = document.getElementById('extension-qrcodes-qrcode');
+	if (qrcodeContainer != null) {
+		return qrcodeContainer;
+	}
+	// Otherwise, create One
+	console.log(styleQrcode);
+	qrcodeContainer = document.createElement('div');
+	qrcodeContainer.id = 'extension-qrcodes-qrcode';
+	qrcodeContainer.style[styleQrcode.position.vertical] = '0px';
+	qrcodeContainer.style[styleQrcode.position.horizontal] = '0px';
+	qrcodeContainer.style.width = styleQrcode.dimension.width;
+	qrcodeContainer.style.height = styleQrcode.dimension.height;
+	var bodies = document.getElementsByTagName('body');
+	// Check if it is a well structured dom.
+	if (bodies.length == 0) {
+		return false;
+	}
+	// Put qrcode in the dom.
+	var body = document.getElementsByTagName('body')[0];
+	body.appendChild(qrcodeContainer);
+	return qrcodeContainer;
+}
+
+/**
+ * Display qrcode if hidden, else hide it.
+ */
+function switchDisplay() {
+	var qrcode = getQrcodeContainer();
+	if (!qrcode) {
+		return;
+	}
+	if (qrcode.style.display == 'block') {
+		qrcode.style.display = 'none';
+	} else {
+		window.onbeforeprint();
 		qrcode.style.display = 'block';
 	}
 }
@@ -86,23 +127,49 @@ function displayIfAuto() {
  */
 function initPrintEvents() {
 	var beforePrint = function() {
-		var qrcode = document.getElementById('extension-qrcodes-qrcode');
-		args.text = window.location.href;
-		try {
-			new QRCode(qrcode, args);
-			window.onbeforeprint = displayIfAuto;
-			window.onbeforeprint();
-		} catch (e) {
-			qrcode.parentNode.removeChild(qrcode);
-			alert(chrome.i18n.getMessage('tooLongURL'));
-			//TODO replace alert with something better
+		var qrcodeContainer = getQrcodeContainer();
+		if (!qrcodeContainer) {
+			return;
 		}
+		qrcodeArguments.text = window.location.href;
+		try {
+			new QRCode(qrcodeContainer, qrcodeArguments);
+		} catch (e) {
+			// Empty container
+			while (qrcodeContainer.firstChild) {
+				qrcodeContainer.removeChild(qrcodeContainer.firstChild);
+			}
+			// Add error message
+			var errorMessage = document.createTextNode(chrome.i18n
+					.getMessage('tooLongURL'));
+			qrcodeContainer.appendChild(errorMessage);
+			return;
+		}
+
+		/**
+		 * Display qrcode if autoDisplay is true.
+		 */
+		function displayIfAuto() {
+			var qrcode = getQrcodeContainer();
+			if (!qrcode) {
+				return;
+			}
+			if (autoDisplayQrcode && qrcode.style.display != 'block') {
+				qrcode.style.display = 'block';
+			}
+		}
+
+		window.onbeforeprint = displayIfAuto;
+		window.onbeforeprint();
 	};
 	window.onbeforeprint = beforePrint;
 
 	var afterPrint = function() {
-		var qrcode = document.getElementById('extension-qrcodes-qrcode');
-		qrcode.style.display = 'none';
+		var qrcodeContainer = getQrcodeContainer();
+		if (!qrcodeContainer) {
+			return;
+		}
+		qrcodeContainer.style.display = 'none';
 	}
 	window.onafterprint = afterPrint;
 
