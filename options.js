@@ -76,9 +76,8 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 		var inputNo = document.createElement('input');
 		inputNo.type = 'button';
 
-		var start = new Date().getTime();
 		function updateTime() {
-			var remaining = parseInt((start + waitTime - new Date().getTime()) / 1000);
+			var remaining = parseInt((end - new Date().getTime()) / 1000);
 			if (remaining <= 0) {
 				clearInterval(updateTimeInterval);
 				callbackFalse();
@@ -87,6 +86,7 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 					+ ')';
 		}
 		updateTimeInterval = setInterval(updateTime, 1000);
+		var end = new Date().getTime() + waitTime;
 		updateTime();
 
 		inputNo.addEventListener('click', function() {
@@ -157,9 +157,8 @@ function alert(waitTime, message, callback, updated) {
 		var input = document.createElement('input');
 		input.type = 'button';
 
-		var start = new Date().getTime();
 		function updateTime() {
-			var remaining = parseInt((start + waitTime - new Date().getTime()) / 1000);
+			var remaining = parseInt((end - new Date().getTime()) / 1000);
 			if (remaining <= 0) {
 				clearInterval(updateTimeInterval);
 				callback();
@@ -167,6 +166,7 @@ function alert(waitTime, message, callback, updated) {
 			input.value = chrome.i18n.getMessage('Ok') + ' (' + remaining + ')';
 		}
 		updateTimeInterval = setInterval(updateTime, 1000);
+		var end = new Date().getTime() + waitTime;
 		updateTime();
 
 		input.addEventListener('click', function() {
@@ -204,16 +204,16 @@ function updated(waitTime, message) {
 	var timer = document.createElement('div');
 	timer.className = 'timer';
 
-	var start = new Date().getTime();
 	function updateTime() {
-		var remaining = parseInt((start + waitTime - new Date().getTime()) / 1000);
+		var remaining = parseInt((end - new Date().getTime()) / 1000);
 		if (remaining <= 0) {
 			clearInterval(updateTimeInterval);
 			box.parentNode.removeChild(box);
 		}
-		timer.textContent = ' (' + remaining + ')';
+		timer.textContent = '(' + remaining + ')';
 	}
 	updateTimeInterval = setInterval(updateTime, 1000);
+	var end = new Date().getTime() + waitTime;
 	updateTime();
 
 	box.appendChild(timer);
@@ -224,25 +224,59 @@ function updated(waitTime, message) {
 }
 
 /**
+ * Check if color is a valid hexadecimal color value.
+ * 
+ * @param color -
+ *            color to check.
+ * @returns True if color is valid.
+ */
+function isValidHexColor(color) {
+	return new RegExp('^#?([a-zA-Z0-9]{3}){2}$', 'g').test(color);
+}
+
+/**
+ * Calculate the average of red, green and blue in a JSColor input.
+ * 
+ * @param colorField -
+ *            JSColor input.
+ * @returns Number between 0 and 1.
+ */
+function calculateAverageJSColor(colorField) {
+	var average = colorField.color.rgb.reduce(function(a, b) {
+		return a + b;
+	}) / 3;
+	return average;
+}
+
+/**
  * Check color on input changes.
  */
 function checkColor() {
-	if (this.value == chrome.i18n.getMessage('optionColorDefaultValue')) {
-		return;
+	var colorField = document.getElementById('color');
+
+	function getErrorNodes() {
+		var errors = [];
+
+		if (isValidHexColor(colorField.value)
+				&& calculateAverageJSColor(colorField) > 0.75) {
+			errors.push(document.getElementById('color-error-too-light'));
+		}
+
+		return errors;
 	}
-	var average = this.color.rgb.reduce(function(a, b) {
-		return a + b;
-	}) / 3;
-	var error = this.parentNode.getElementsByClassName('error')[0];
-	if (typeof error == 'undefined') {
-		error = document.createElement('div');
-		error.className = 'error';
-		this.parentNode.appendChild(error);
+
+	var errors = getErrorNodes();
+	var errorsOld = colorField.parentNode.getElementsByClassName('error');
+	for (var i = 0; i < errorsOld.length; i++) {
+		var error = errorsOld[i];
+		console.log(error);
+		if (-1 == errors.indexOf(error)) {
+			error.style.display = 'none';
+		}
 	}
-	if (average > 0.75) {
-		error.textContent = chrome.i18n.getMessage('optionColorTooLightAlert');
-	} else {
-		error.textContent = '';
+	for (i in errors) {
+		var error = errors[i];
+		error.style.display = 'block';
 	}
 }
 document.getElementById('color').addEventListener('change', checkColor);
@@ -357,9 +391,10 @@ function getDefaultOptions() {
  * Reset color field.
  */
 function setAutomaticColor() {
-	var color = document.getElementById('color');
-	color.className = null;
-	color.value = chrome.i18n.getMessage('optionColorDefaultValue');
+	var colorField = document.getElementById('color');
+	colorField.color.fromRGB(0, 0, 0);
+	colorField.value = chrome.i18n.getMessage('optionColorDefaultValue');
+	checkColor();
 }
 
 /**
@@ -415,6 +450,29 @@ function initDomPage() {
 	});
 	document.getElementById('color').parentNode.appendChild(resetColorLink);
 
+	// Error messages
+	/**
+	 * Create a error box and append it in container.
+	 * 
+	 * @param container -
+	 *            Where to insert error.
+	 * @param id -
+	 *            Identifier of error node.
+	 * @param message -
+	 *            Error message.
+	 */
+	function addErrorNode(container, id, message) {
+		var error = document.createElement('div');
+		error.id = id;
+		error.className = 'error';
+		error.textContent = message;
+		container.appendChild(error);
+	}
+	// Color errors
+	var container = document.getElementById('color').parentNode;
+	addErrorNode(container, 'color-error-too-light', chrome.i18n
+			.getMessage('optionColorTooLightAlert'));
+
 	// Control buttons
 	document.getElementById('reset').addEventListener('click', resetOptions);
 	document.getElementById('save').addEventListener('click', saveOptions);
@@ -440,7 +498,9 @@ function restoreOptions() {
 							setAutomaticColor();
 						}
 						document.getElementById('color').color.minS = 0.5;
+						document.getElementById('color').color.adjust = false;
 						document.getElementById('color').color.required = false;
+						document.getElementById('color').color.onImmediateChange = checkColor;
 						document.getElementById('auto-display').checked = items.autoDisplay;
 						document.getElementById('vertical-position').value = items.verticalPosition;
 						document.getElementById('horizontal-position').value = items.horizontalPosition;
@@ -459,7 +519,8 @@ document.addEventListener('DOMContentLoaded', restoreOptions);
 /**
  * Save settings in chrome then dispaly a notice to user.
  * 
- * @param options - Settings to save
+ * @param options -
+ *            Settings to save
  */
 function saveAndNotice(options) {
 	chrome.storage.sync.set(options, function() {

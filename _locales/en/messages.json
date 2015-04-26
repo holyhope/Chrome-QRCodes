@@ -9,7 +9,7 @@
  },
  
  "installMessage": {
-  "message": "QRCodes need that you reload tabs before you can display qrcode.",
+  "message": "QRCodes need that you reload tabs before you can use it.",
   "description": "Alert displayed on instalaltion: user must reload tabs."
  },
  
