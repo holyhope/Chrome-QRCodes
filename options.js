@@ -85,7 +85,7 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 			inputNo.value = chrome.i18n.getMessage('No') + ' (' + remaining
 					+ ')';
 		}
-		updateTimeInterval = setInterval(updateTime, 1000);
+		updateTimeInterval = setInterval(updateTime, 250);
 		var end = new Date().getTime() + waitTime;
 		updateTime();
 
@@ -165,7 +165,7 @@ function alert(waitTime, message, callback, updated) {
 			}
 			input.value = chrome.i18n.getMessage('Ok') + ' (' + remaining + ')';
 		}
-		updateTimeInterval = setInterval(updateTime, 1000);
+		updateTimeInterval = setInterval(updateTime, 250);
 		var end = new Date().getTime() + waitTime;
 		updateTime();
 
@@ -212,7 +212,7 @@ function updated(waitTime, message) {
 		}
 		timer.textContent = '(' + remaining + ')';
 	}
-	updateTimeInterval = setInterval(updateTime, 1000);
+	updateTimeInterval = setInterval(updateTime, 250);
 	var end = new Date().getTime() + waitTime;
 	updateTime();
 
@@ -357,7 +357,7 @@ function getSizeValue() {
  */
 function getColorValue() {
 	var color = document.getElementById('color').value;
-	if (!/^[0-9A-F]{6}$/i.test(color)) {
+	if (!isValidHexColor(color)) {
 		color = false;
 	}
 	return color;
@@ -370,21 +370,6 @@ function getColorValue() {
  */
 function getAutoDisplayValue() {
 	return document.getElementById('auto-display').checked == true;
-}
-
-/**
- * get default values.
- * 
- * @returns Initial values.
- */
-function getDefaultOptions() {
-	return {
-		size : '120',
-		color : false,
-		autoDisplay : true,
-		verticalPosition : 'top',
-		horizontalPosition : 'right'
-	};
 }
 
 /**
@@ -440,15 +425,26 @@ document.addEventListener('DOMContentLoaded', initI18nPage);
  */
 function initDomPage() {
 	// Color input
+	var colorField = document.getElementById('color');
 	var resetColorLink = document.createElement('a');
 	resetColorLink.className = 'button';
 	resetColorLink.textContent = chrome.i18n
 			.getMessage('optionColorAutomaticLabel');
 	resetColorLink.addEventListener('click', setAutomaticColor);
-	document.getElementById('color').addEventListener('click', function() {
+	colorField.addEventListener('click', function() {
 		this.className = 'color';
 	});
-	document.getElementById('color').parentNode.appendChild(resetColorLink);
+	colorField.parentNode.appendChild(resetColorLink);
+
+	function initColor() {
+		colorField.removeEventListener('focus', initColor);
+		colorField.className = 'color';
+		colorField.color.minS = 0.5;
+		colorField.color.adjust = false;
+		colorField.color.required = false;
+		colorField.color.onImmediateChange = checkColor;
+	}
+	colorField.addEventListener('focus', initColor);
 
 	// Error messages
 	/**
@@ -486,21 +482,16 @@ function restoreOptions() {
 	chrome.storage.sync
 			.get(
 					// Use default values
-					getDefaultOptions(),
+					pluginQRCodesgetDefaultOptions(),
 					function(items) {
 						// Set values.
 						document.getElementById('size').value = items.size;
 						if (items.color) {
-							document.getElementById('color').className = 'color';
 							document.getElementById('color').color
 									.fromString(items.color);
 						} else {
 							setAutomaticColor();
 						}
-						document.getElementById('color').color.minS = 0.5;
-						document.getElementById('color').color.adjust = false;
-						document.getElementById('color').color.required = false;
-						document.getElementById('color').color.onImmediateChange = checkColor;
 						document.getElementById('auto-display').checked = items.autoDisplay;
 						document.getElementById('vertical-position').value = items.verticalPosition;
 						document.getElementById('horizontal-position').value = items.horizontalPosition;
@@ -554,6 +545,6 @@ function saveOptions() {
  */
 function resetOptions() {
 	confirm(7500, chrome.i18n.getMessage('confirmReset'), function() {
-		saveAndNotice(getDefaultOptions());
+		saveAndNotice(pluginQRCodesgetDefaultOptions());
 	});
 }

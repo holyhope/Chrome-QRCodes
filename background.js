@@ -53,7 +53,7 @@
 		}
 
 		chrome.tabs.executeScript({
-			code : 'switchDisplay();'
+			code : 'pluginQRCodes.switchDisplay();'
 		}, disableOnError);
 	});
 })();
