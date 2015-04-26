@@ -22,6 +22,10 @@ label {
 	margin: 3px 0px 7px 0px;
 }
 
+.notices .timer {
+	float: right;
+}
+
 .notices .input-container {
 	margin-top: 7px;
 	text-align: right;

@@ -4,7 +4,7 @@
  * method.
  * 
  * @param waitTime -
- *            Time (milliseconds) before remove message.
+ *            Time (milliseconds) before removing message.
  * @param message -
  *            Message to display in confirm box.
  * @param callbackTrue -
@@ -23,17 +23,17 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 		}
 		var oldCallbackFalse = callbackFalse;
 		callbackFalse = function() {
-			var container = confirmBox.parentNode;
+			var container = box.parentNode;
 			if (container != null) {
-				container.removeChild(confirmBox);
+				container.removeChild(box);
 				oldCallbackFalse();
 			}
 		}
 		var oldCallbackTrue = callbackTrue;
 		callbackTrue = function() {
-			var container = confirmBox.parentNode;
+			var container = box.parentNode;
 			if (container != null) {
-				container.removeChild(confirmBox);
+				container.removeChild(box);
 				oldCallbackTrue();
 			}
 		}
@@ -42,10 +42,9 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 
 	var updateTimeInterval;
 
-	var confirmBox = document.createElement('div');
-	confirmBox.className = 'warning notices';
-	confirmBox.textContent = message;
-	confirmBox.style.display = 'block';
+	var box = document.createElement('div');
+	box.className = 'warning notices';
+	box.textContent = message;
 
 	var inputsContainer = document.createElement('div');
 	inputsContainer.className = 'input-container';
@@ -62,7 +61,6 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 
 		inputYes.addEventListener('click', function() {
 			clearInterval(updateTimeInterval);
-			console.log('yes !');
 			callbackTrue();
 		});
 
@@ -77,24 +75,22 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 	function createInputNo() {
 		var inputNo = document.createElement('input');
 		inputNo.type = 'button';
-		inputNo.value = chrome.i18n.getMessage('No');
 
 		var start = new Date().getTime();
 		function updateTime() {
 			var remaining = parseInt((start + waitTime - new Date().getTime()) / 1000);
-			inputNo.value = chrome.i18n.getMessage('No');
 			if (remaining <= 0) {
 				clearInterval(updateTimeInterval);
 				callbackFalse();
 			}
-			inputNo.value += ' (' + remaining + ')';
+			inputNo.value = chrome.i18n.getMessage('No') + ' (' + remaining
+					+ ')';
 		}
 		updateTimeInterval = setInterval(updateTime, 1000);
 		updateTime();
 
 		inputNo.addEventListener('click', function() {
 			clearInterval(updateTimeInterval);
-			console.log('no !');
 			callbackFalse();
 		});
 
@@ -103,12 +99,128 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 	inputsContainer.appendChild(createInputNo());
 	inputsContainer.appendChild(createInputYes());
 
-	confirmBox.appendChild(inputsContainer);
+	box.appendChild(inputsContainer);
 
 	// Add div in the dom.
 	var container = document.getElementById('option-title').parentNode;
-	container.insertBefore(confirmBox, container
-			.getElementsByClassName('block')[0]);
+	container.insertBefore(box, container.getElementsByClassName('block')[0]);
+}
+
+/**
+ * Display an alert during waitTime milliseconds. Call callback on close.
+ * 
+ * @param waitTime -
+ *            Time (milliseconds) before removing alert.
+ * @param message -
+ *            Message to display in alert box.
+ * @param callback -
+ *            Callback to call on close.
+ */
+function alert(waitTime, message, callback, updated) {
+	/**
+	 * Sanitize arguments
+	 */
+	function sanitizeArgs() {
+		if (typeof callback == 'undefined') {
+			callback = function() {
+			};
+		}
+		var oldCallback = callback;
+		callback = function() {
+			var container = box.parentNode;
+			if (container != null) {
+				container.removeChild(box);
+				oldCallback();
+			}
+		}
+		if (typeof updated == 'undefined') {
+			updated = false;
+		}
+	}
+	sanitizeArgs();
+
+	var updateTimeInterval;
+
+	var box = document.createElement('div');
+	box.className = 'alert notices';
+	box.textContent = message;
+
+	var inputsContainer = document.createElement('div');
+	inputsContainer.className = 'input-container';
+
+	/**
+	 * Create the <i>no</i> input.
+	 * 
+	 * @return Input node.
+	 */
+	function createInput() {
+		var input = document.createElement('input');
+		input.type = 'button';
+
+		var start = new Date().getTime();
+		function updateTime() {
+			var remaining = parseInt((start + waitTime - new Date().getTime()) / 1000);
+			if (remaining <= 0) {
+				clearInterval(updateTimeInterval);
+				callback();
+			}
+			input.value = chrome.i18n.getMessage('Ok') + ' (' + remaining + ')';
+		}
+		updateTimeInterval = setInterval(updateTime, 1000);
+		updateTime();
+
+		input.addEventListener('click', function() {
+			clearInterval(updateTimeInterval);
+			callback();
+		});
+
+		return input;
+	}
+
+	inputsContainer.appendChild(createInput());
+
+	box.appendChild(inputsContainer);
+
+	// Add div in the dom.
+	var container = document.getElementById('option-title').parentNode;
+	container.insertBefore(box, container.getElementsByClassName('block')[0]);
+}
+
+/**
+ * Display an update notice during waitTime milliseconds.
+ * 
+ * @param waitTime -
+ *            Time (milliseconds) before removing message.
+ * @param message -
+ *            Message to display in notice.
+ */
+function updated(waitTime, message) {
+	var updateTimeInterval;
+
+	var box = document.createElement('div');
+	box.className = 'updated notices';
+	box.textContent = message;
+
+	var timer = document.createElement('div');
+	timer.className = 'timer';
+
+	var start = new Date().getTime();
+	function updateTime() {
+		var remaining = parseInt((start + waitTime - new Date().getTime()) / 1000);
+		if (remaining <= 0) {
+			clearInterval(updateTimeInterval);
+			box.parentNode.removeChild(box);
+		}
+		timer.textContent = ' (' + remaining + ')';
+	}
+	updateTimeInterval = setInterval(updateTime, 1000);
+	updateTime();
+
+	box.appendChild(timer);
+
+	// Add div in the dom.
+	var container = document.getElementById('option-title').parentNode;
+	container.insertBefore(box, container.getElementsByClassName('block')[0]);
 }
 
 /**
@@ -345,6 +457,18 @@ function restoreOptions() {
 document.addEventListener('DOMContentLoaded', restoreOptions);
 
 /**
+ * Save settings in chrome then dispaly a notice to user.
+ * 
+ * @param options - Settings to save
+ */
+function saveAndNotice(options) {
+	chrome.storage.sync.set(options, function() {
+		updated(3000, chrome.i18n.getMessage('optionsSaved'));
+		restoreOptions();
+	});
+}
+
+/**
  * Save settings using dom elements in chrome.storage.
  */
 function saveOptions() {
@@ -355,31 +479,12 @@ function saveOptions() {
 	var verticalPosition = getVerticalPositionValue();
 	var horizontalPosition = getHorizontalPositionValue();
 
-	// Save it
-	chrome.storage.sync.set({
+	saveAndNotice({
 		size : size,
 		color : color,
 		autoDisplay : autoDisplay,
 		verticalPosition : verticalPosition,
 		horizontalPosition : horizontalPosition
-	}, function() {
-		// Update status to let user know options were saved.
-		var status = document.getElementById('status');
-		if (!status) {
-			status = document.createElement('div');
-			var container = document.getElementById('option-title').parentNode;
-			container.insertBefore(status, container
-					.getElementsByClassName('block')[0]);
-		}
-		status.className = 'updated notices';
-		status.textContent = chrome.i18n.getMessage('optionsSaved');
-		status.style.display = 'block';
-		setTimeout(function() {
-			status.style.display = 'none';
-		}, 1000);
-
-		// Display saved options
-		restoreOptions();
 	});
 }
 
@@ -387,38 +492,7 @@ function saveOptions() {
  * Reset settings using getDefaultOptions in chrome.storage.
  */
 function resetOptions() {
-	confirm(
-			7500,
-			chrome.i18n.getMessage('confirmReset'),
-			function() {
-				chrome.storage.sync
-						.set(
-								getDefaultOptions(),
-								function() {
-									// Update status to let user know options
-									// were saved.
-									var status = document
-											.getElementById('status');
-									if (!status) {
-										status = document.createElement('div');
-										var container = document
-												.getElementById('option-title').parentNode;
-										container
-												.insertBefore(
-														status,
-														container
-																.getElementsByClassName('block')[0]);
-									}
-									status.className = 'updated notices';
-									status.textContent = chrome.i18n
-											.getMessage('optionsReseted');
-									status.style.display = 'block';
-									setTimeout(function() {
-										status.style.display = 'none';
-									}, 850);
-
-									// Display saved options
-									restoreOptions();
-								});
-			});
+	confirm(7500, chrome.i18n.getMessage('confirmReset'), function() {
+		saveAndNotice(getDefaultOptions());
+	});
 }
