@@ -12,8 +12,13 @@ Extension for Google Chrome wich add a qrcode to pages.
 6. Click on `Load unpacked extension`
 7. Enjoy !
 
-## TODO List
+# TODO List
 
 * Add transition on display and hide qrcodes.
 * Replace alert with something better in case of long url.
 * Write a better description.
+
+# Contributors
+
+* Project initiated and maintained by [Pierre Péronnet](https://github.com/holyhope "GitHub")
+* Icons made by Mélodie Galmiche.
