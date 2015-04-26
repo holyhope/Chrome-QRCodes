@@ -18,7 +18,14 @@ Extension for Google Chrome wich add a qrcode to pages.
 * Replace alert with something better in case of long url.
 * Write a better description.
 
-# Contributors
+# Contributions
+
+## Direct contributors
 
 * Project initiated and maintained by [Pierre Péronnet](https://github.com/holyhope "GitHub")
-* Icons made by Mélodie Galmiche.
+* Icons made by *Mélodie Galmiche*.
+
+## Other
+
+* Use [qrcodejs](https://github.com/davidshimjs/qrcodejs 'A qrcode maker').
+* Use [jscolor](http://jscolor.com/ 'a color picker').
