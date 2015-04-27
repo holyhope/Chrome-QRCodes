@@ -1,32 +1,26 @@
 #extension-qrcodes-qrcode {
-	background-color: #FFFFFF;
-	border-style: none;
+	background-color: #FFFFFF !important;
+	border-style: none !important;
+	cursor: move;
 	display: none;
-	margin: 0;
-	opacity: 1;
-	transition: opacity .35s ease-out;
-	-webkit-transition: opacity .35s ease-out;
-	overflow: hidden;
-	padding: 8px;
-	position: absolute;
-	word-wrap: normal;
-	z-index: 19999999999;
+	margin: 0 !important;
+	opacity: 1 !important;
+	transition: opacity .35s ease-out !important;
+	-webkit-transition: opacity .35s ease-out !important;
+	position: fixed !important;
+	word-wrap: normal !important;
+	z-index: 19999999999 !important;
+	display: none;
 }
 
 #extension-qrcodes-qrcode:hover {
-	opacity: 0.35;
-	transition: opacity .35s ease-out;
-	-webkit-transition: opacity .35s ease-out;
+	opacity: 0.35 !important;
+	transition: opacity .35s ease-out !important;
+	-webkit-transition: opacity .35s ease-out !important;
 }
 
 #extension-qrcodes-qrcode img {
-	border-style: none;
-	margin: 0;
-	padding: 0;
-}
-
-@media not print {
-	#extension-qrcodes-qrcode {
-		position: fixed;
-	}
+	border-style: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
 }

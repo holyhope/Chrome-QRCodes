@@ -2,6 +2,7 @@ var pluginQRCodes = {
 	libraryArguments : false, // Used to create qrcodes.
 	autoDisplay : false, // True if qrcode must be shown on print.
 	style : false,
+	padding : 8,
 
 	/**
 	 * Get color from meta node in dom.
@@ -25,18 +26,18 @@ var pluginQRCodes = {
 	 */
 	getContainer : function() {
 		// Check if container already exists
-		var qrcodeContainer = document
-				.getElementById('extension-qrcodes-qrcode');
-		if (qrcodeContainer != null) {
-			return qrcodeContainer;
+		var container = document.getElementById('extension-qrcodes-qrcode');
+		if (container != null) {
+			return container;
 		}
 		// Otherwise, create One
-		qrcodeContainer = document.createElement('div');
-		qrcodeContainer.id = 'extension-qrcodes-qrcode';
-		qrcodeContainer.style[this.style.position.vertical] = '0px';
-		qrcodeContainer.style[this.style.position.horizontal] = '0px';
-		qrcodeContainer.style.width = this.style.dimension.width;
-		qrcodeContainer.style.height = this.style.dimension.height;
+		container = document.createElement('div');
+		container.id = 'extension-qrcodes-qrcode';
+		container.style[this.style.position.vertical] = '0px';
+		container.style[this.style.position.horizontal] = '0px';
+		container.style.width = this.style.dimension.width;
+		container.style.height = this.style.dimension.height;
+		container.style.padding = this.padding + 'px';
 		var bodies = document.getElementsByTagName('body');
 		// Check if it is a well structured dom.
 		if (bodies.length == 0) {
@@ -44,8 +45,8 @@ var pluginQRCodes = {
 		}
 		// Put qrcode in the dom.
 		var body = document.getElementsByTagName('body')[0];
-		body.appendChild(qrcodeContainer);
-		return qrcodeContainer;
+		body.appendChild(container);
+		return container;
 	},
 
 	/**
@@ -126,25 +127,60 @@ var pluginQRCodes = {
 		}
 	},
 
+	getDimension : function() {
+		var container = this.getContainer();
+		var padding = this.padding * 2;
+
+		return dimension = {
+			width : parseInt(container.style.width) + padding,
+			height : parseInt(container.style.height) + padding
+		};
+	},
+
+	getPosition : function() {
+		var container = this.getContainer();
+
+		return {
+			x : parseInt(container.style[pluginQRCodes.style.position.horizontal]),
+			y : parseInt(container.style[pluginQRCodes.style.position.vertical])
+		};
+	},
+
+	setPosition : function(position) {
+		var dimension = this.getDimension();
+
+		// Fix a bug
+		dimension.height -= 2 * this.padding;
+
+		var widthArea = window.innerWidth;
+		if (position.x < 0) {
+			position.x = 0;
+		} else if (position.x + dimension.width >= widthArea) {
+			position.x = widthArea - dimension.width - 1;
+		}
+
+		var heightArea = window.innerHeight;
+		if (position.y < 0) {
+			position.y = 0;
+		} else if (position.y + dimension.height >= heightArea) {
+			position.y = heightArea - dimension.height - 1;
+		}
+
+		var container = this.getContainer();
+
+		container.style[pluginQRCodes.style.position.horizontal] = parseInt(position.x)
+				+ 'px';
+		container.style[pluginQRCodes.style.position.vertical] = parseInt(position.y)
+				+ 'px';
+	},
+
 	moveContainer : function(event) {
 		var container = pluginQRCodes.getContainer();
 
-		var position = {
-			x : parseInt(container.style[pluginQRCodes.style.position.horizontal])
-					- event.movementX,
-			y : parseInt(container.style[pluginQRCodes.style.position.vertical])
-					+ event.movementY
-		};
-		if (position.x < 0) {
-			position.x = 0;
-		}
-		if (position.y < 0) {
-			position.y = 0;
-		}
-		container.style[pluginQRCodes.style.position.vertical] = position.y
-				+ 'px';
-		container.style[pluginQRCodes.style.position.horizontal] = position.x
-				+ 'px';
+		var position = pluginQRCodes.getPosition();
+		position.x -= event.movementX;
+		position.y += event.movementY;
+		pluginQRCodes.setPosition(position);
 	},
 
 	initMouseEvents : function() {
@@ -155,32 +191,50 @@ var pluginQRCodes = {
 			if (0 != event.button) {
 				return;
 			}
-			console.log('Motion !');
-			container.removeEventListener('click', activeMotion);
+			event.preventDefault();
+			container.removeEventListener('mousedown', activeMotion);
 			window.addEventListener('mousemove', pluginQRCodes.moveContainer);
-			container.style.cursor = 'move';
-			setTimeout(function() {
-				window.addEventListener('click', deactiveMotion);
-			}, 10);
+			window.addEventListener('mouseup', deactiveMotion);
 		}
 		function deactiveMotion(event) {
 			// Check if it's left button
 			if (0 != event.button) {
 				return;
 			}
-			console.log('Stop !');
 			window
 					.removeEventListener('mousemove',
 							pluginQRCodes.moveContainer);
-			window.removeEventListener('click', deactiveMotion);
-			container.style.cursor = 'auto';
-			setTimeout(function() {
-				container.addEventListener('click', activeMotion);
-				container.style.cursor = 'pointer';
-			}, 10);
+			window.removeEventListener('mouseup', deactiveMotion);
+			container.addEventListener('mousedown', activeMotion);
 		}
-		container.addEventListener('click', activeMotion);
-		container.style.cursor = 'pointer';
+		container.addEventListener('mousedown', activeMotion);
+	},
+
+	initWindowEvents : function(event) {
+		var innerWidth = window.innerWidth;
+		var innerHeight = window.innerHeight;
+
+		var timeout;
+
+		function fixPosition(event) {
+			clearTimeout(timeout);
+			timeout = setTimeout(function() {
+				var position = pluginQRCodes.getPosition();
+				var dimension = pluginQRCodes.getDimension();
+				var widthArea = window.innerWidth;
+				var heightArea = window.innerHeight;
+
+				var newInnerWidth = event.target.innerWidth;
+				var newInnerHeight = event.target.innerHeight;
+				position.x = (position.x * newInnerWidth) / innerWidth;
+				position.y = (position.y * newInnerHeight) / innerHeight;
+				innerWidth = newInnerWidth;
+				innerHeight = newInnerHeight;
+
+				pluginQRCodes.setPosition(position);
+			}, 170);
+		}
+		window.addEventListener('resize', fixPosition);
 	},
 
 	init : function() {
@@ -219,6 +273,7 @@ var pluginQRCodes = {
 
 			// Inits events listeners
 			pluginQRCodes.initPrintEvents();
+			pluginQRCodes.initWindowEvents();
 			pluginQRCodes.initMouseEvents();
 		});
 	}

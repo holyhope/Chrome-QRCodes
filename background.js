@@ -1,23 +1,19 @@
 (function() {
 	/**
-	 * Disable browserAction update if error
-	 */
-	function enableOrDisableOnError() {
-		if (chrome.runtime.lastError) {
-			chrome.browserAction.disable(tabId);
-		} else {
-			chrome.browserAction.enable(tabId);
-		}
-	}
-
-	/**
 	 * Enable/Disable browserAction on update
 	 */
 	function enableDisableForTab(tabId) {
 		// Test modify dom (needed for switchDisplay.js
 		chrome.tabs.executeScript(tabId, {
 			code : 'document.getElementsByTagName(\'body\').innerHTML += \'\';'
-		}, enableOrDisableOnError);
+		}, function() {
+			// Disable browserAction update if error
+			if (chrome.runtime.lastError) {
+				chrome.browserAction.disable(tabId);
+			} else {
+				chrome.browserAction.enable(tabId);
+			}
+		});
 	}
 	chrome.tabs.onUpdated.addListener(enableDisableForTab);
 
