@@ -1,8 +1,9 @@
 var pluginQRCodes = {
 	libraryArguments : false, // Used to create qrcodes.
 	autoDisplay : false, // True if qrcode must be shown on print.
-	style : false,
-	padding : 8,
+	defaultStyleData : {
+		padding : 8,
+	}, // Object containing style
 
 	/**
 	 * Get color from meta node in dom.
@@ -33,19 +34,17 @@ var pluginQRCodes = {
 		// Otherwise, create One
 		container = document.createElement('div');
 		container.id = 'extension-qrcodes-qrcode';
-		container.style[this.style.position.vertical] = '0px';
-		container.style[this.style.position.horizontal] = '0px';
-		container.style.width = this.style.dimension.width;
-		container.style.height = this.style.dimension.height;
-		container.style.padding = this.padding + 'px';
-		var bodies = document.getElementsByTagName('body');
-		// Check if it is a well structured dom.
-		if (bodies.length == 0) {
-			return false;
-		}
+
+		// Add styles
+		container.style[this.defaultStyleData.position.vertical] = '0px';
+		container.style[this.defaultStyleData.position.horizontal] = '0px';
+		container.style.width = this.defaultStyleData.dimension.width + 'px';
+		container.style.height = this.defaultStyleData.dimension.height + 'px';
+		container.style.padding = this.defaultStyleData.padding + 'px';
+
 		// Put qrcode in the dom.
-		var body = document.getElementsByTagName('body')[0];
-		body.appendChild(container);
+		document.body.appendChild(container);
+
 		return container;
 	},
 
@@ -53,83 +52,26 @@ var pluginQRCodes = {
 	 * Display qrcode if hidden, else hide it.
 	 */
 	switchDisplay : function() {
-		var qrcode = this.getContainer();
-		if (!qrcode) {
+		var container = this.getContainer();
+		if (!container) {
 			return;
 		}
-		if (qrcode.style.display == 'block') {
-			qrcode.style.display = 'none';
+		if (container.style.display == 'block') {
+			container.style.display = 'none';
 		} else {
 			window.onbeforeprint();
-			qrcode.style.display = 'block';
+			container.style.display = 'block';
 		}
 	},
 
 	/**
-	 * Set print event.
+	 * Get current dimension of the qrcode.
+	 * 
+	 * @returns {(int) width, (int) height}
 	 */
-	initPrintEvents : function() {
-		var qrcodeContainer = this.getContainer();
-		var beforePrint = function() {
-			if (!qrcodeContainer) {
-				return;
-			}
-			pluginQRCodes.libraryArguments.text = window.location.href;
-			try {
-				new QRCode(qrcodeContainer, pluginQRCodes.libraryArguments);
-			} catch (e) {
-				// Empty container
-				while (qrcodeContainer.firstChild) {
-					qrcodeContainer.removeChild(qrcodeContainer.firstChild);
-				}
-				// Add error message
-				var errorMessage = document.createTextNode(chrome.i18n
-						.getMessage('tooLongURL'));
-				qrcodeContainer.appendChild(errorMessage);
-				return;
-			}
-
-			/**
-			 * Display qrcode if autoDisplay is true.
-			 */
-			function displayIfAuto() {
-				if (!qrcodeContainer) {
-					return;
-				}
-				if (this.autoDisplay
-						&& qrcodeContainer.style.display != 'block') {
-					qrcodeContainer.style.display = 'block';
-				}
-			}
-
-			window.onbeforeprint = displayIfAuto;
-			window.onbeforeprint();
-		};
-		window.onbeforeprint = beforePrint;
-
-		var afterPrint = function() {
-			if (!qrcodeContainer) {
-				return;
-			}
-			qrcodeContainer.style.display = 'none';
-		}
-		window.onafterprint = afterPrint;
-
-		if (window.matchMedia) {
-			var mediaQueryList = window.matchMedia('print');
-			mediaQueryList.addListener(function(mql) {
-				if (mql.matches) {
-					window.onbeforeprint();
-				} else {
-					window.onafterprint();
-				}
-			});
-		}
-	},
-
 	getDimension : function() {
 		var container = this.getContainer();
-		var padding = this.padding * 2;
+		var padding = this.defaultStyleData.padding * 2;
 
 		return dimension = {
 			width : parseInt(container.style.width) + padding,
@@ -137,20 +79,31 @@ var pluginQRCodes = {
 		};
 	},
 
+	/**
+	 * Get current position of the qrcode.
+	 * 
+	 * @returns {(int) x, (int) y}
+	 */
 	getPosition : function() {
 		var container = this.getContainer();
 
 		return {
-			x : parseInt(container.style[pluginQRCodes.style.position.horizontal]),
-			y : parseInt(container.style[pluginQRCodes.style.position.vertical])
+			x : parseInt(container.style[pluginQRCodes.defaultStyleData.position.horizontal]),
+			y : parseInt(container.style[pluginQRCodes.defaultStyleData.position.vertical])
 		};
 	},
 
+	/**
+	 * Define a position for the qrcode and fix them to fit in current window.
+	 * 
+	 * @param position -
+	 *            new position of the qrcode.
+	 */
 	setPosition : function(position) {
 		var dimension = this.getDimension();
 
 		// Fix a bug
-		dimension.height -= 2 * this.padding;
+		dimension.height -= 2 * this.defaultStyleData.padding;
 
 		var widthArea = window.innerWidth;
 		if (position.x < 0) {
@@ -168,13 +121,19 @@ var pluginQRCodes = {
 
 		var container = this.getContainer();
 
-		container.style[pluginQRCodes.style.position.horizontal] = parseInt(position.x)
+		container.style[pluginQRCodes.defaultStyleData.position.horizontal] = parseInt(position.x)
 				+ 'px';
-		container.style[pluginQRCodes.style.position.vertical] = parseInt(position.y)
+		container.style[pluginQRCodes.defaultStyleData.position.vertical] = parseInt(position.y)
 				+ 'px';
 	},
 
-	moveContainer : function(event) {
+	/**
+	 * Move the qrcode thanks to event.movementX and event.movementY.
+	 * 
+	 * @param event -
+	 *            Object containing movement.
+	 */
+	move : function(event) {
 		var container = pluginQRCodes.getContainer();
 
 		var position = pluginQRCodes.getPosition();
@@ -183,6 +142,66 @@ var pluginQRCodes = {
 		pluginQRCodes.setPosition(position);
 	},
 
+	/**
+	 * Set print event.
+	 */
+	initPrintEvents : function() {
+
+		var beforePrint = function() {
+			var container = pluginQRCodes.getContainer();
+
+			pluginQRCodes.libraryArguments.text = window.location.href;
+			try {
+				new QRCode(container, pluginQRCodes.libraryArguments);
+			} catch (e) {
+				// Empty container
+				while (container.firstChild) {
+					container.removeChild(container.firstChild);
+				}
+				// Add error message
+				var errorMessage = document.createTextNode(chrome.i18n
+						.getMessage('tooLongURL'));
+				container.appendChild(errorMessage);
+				return;
+			}
+
+			/**
+			 * Display qrcode if autoDisplay is true.
+			 */
+			function displayIfAuto() {
+				if (this.autoDisplay && container.style.display != 'block') {
+					container.style.display = 'block';
+				}
+			}
+
+			window.onbeforeprint = displayIfAuto;
+			window.onbeforeprint();
+		};
+		window.onbeforeprint = beforePrint;
+
+		var afterPrint = function() {
+			if (!container) {
+				return;
+			}
+			container.style.display = 'none';
+		}
+		window.onafterprint = afterPrint;
+
+		if (window.matchMedia) {
+			var mediaQueryList = window.matchMedia('print');
+			mediaQueryList.addListener(function(mql) {
+				if (mql.matches) {
+					window.onbeforeprint();
+				} else {
+					window.onafterprint();
+				}
+			});
+		}
+	},
+
+	/**
+	 * Initialize event of mouse.
+	 */
 	initMouseEvents : function() {
 		var container = this.getContainer();
 
@@ -193,7 +212,7 @@ var pluginQRCodes = {
 			}
 			event.preventDefault();
 			container.removeEventListener('mousedown', activeMotion);
-			window.addEventListener('mousemove', pluginQRCodes.moveContainer);
+			window.addEventListener('mousemove', pluginQRCodes.move);
 			window.addEventListener('mouseup', deactiveMotion);
 		}
 		function deactiveMotion(event) {
@@ -201,16 +220,17 @@ var pluginQRCodes = {
 			if (0 != event.button) {
 				return;
 			}
-			window
-					.removeEventListener('mousemove',
-							pluginQRCodes.moveContainer);
+			window.removeEventListener('mousemove', pluginQRCodes.move);
 			window.removeEventListener('mouseup', deactiveMotion);
 			container.addEventListener('mousedown', activeMotion);
 		}
 		container.addEventListener('mousedown', activeMotion);
 	},
 
-	initWindowEvents : function(event) {
+	/**
+	 * Initialize event of window object.
+	 */
+	initWindowEvents : function() {
 		var innerWidth = window.innerWidth;
 		var innerHeight = window.innerHeight;
 
@@ -237,6 +257,9 @@ var pluginQRCodes = {
 		window.addEventListener('resize', fixPosition);
 	},
 
+	/**
+	 * Initialize plugin.
+	 */
 	init : function() {
 		chrome.storage.sync.get(pluginQRCodesgetDefaultOptions(), function(
 				items) {
@@ -259,16 +282,14 @@ var pluginQRCodes = {
 				pluginQRCodes.libraryArguments.colorDark = color;
 			}
 
-			var size = (parseInt(items.size) + 16) + 'px';
-			pluginQRCodes.style = {
-				position : {
-					vertical : items.verticalPosition,
-					horizontal : items.horizontalPosition
-				},
-				dimension : {
-					width : size,
-					height : size
-				}
+			var size = (parseInt(items.size) + 16);
+			pluginQRCodes.defaultStyleData.position = {
+				vertical : items.verticalPosition,
+				horizontal : items.horizontalPosition
+			};
+			pluginQRCodes.defaultStyleData.dimension = {
+				width : size,
+				height : size
 			};
 
 			// Inits events listeners
