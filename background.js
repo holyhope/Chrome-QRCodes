@@ -30,8 +30,14 @@
 	 * Alert user that tabs must be reloaded to work after installation.
 	 */
 	chrome.runtime.onInstalled.addListener(function(details) {
-		var message = chrome.i18n.getMessage('installMessage');
-		alert(message);
+		switch (details.reason) {
+		case 'install':
+			var message = chrome.i18n.getMessage('installMessage');
+			alert(message);
+			break;
+		default:
+			break;
+		}
 	});
 
 	/**
