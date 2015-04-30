@@ -102,21 +102,18 @@ var pluginQRCodes = {
 	setPosition : function(position) {
 		var dimension = this.getDimension();
 
-		// Fix a bug
-		dimension.height -= 2 * this.defaultStyleData.padding;
-
 		var widthArea = window.innerWidth;
 		if (position.x < 0) {
 			position.x = 0;
 		} else if (position.x + dimension.width >= widthArea) {
-			position.x = widthArea - dimension.width - 1;
+			position.x = widthArea - dimension.width;
 		}
 
 		var heightArea = window.innerHeight;
 		if (position.y < 0) {
 			position.y = 0;
 		} else if (position.y + dimension.height >= heightArea) {
-			position.y = heightArea - dimension.height - 1;
+			position.y = heightArea - dimension.height;
 		}
 
 		var container = this.getContainer();
@@ -282,7 +279,7 @@ var pluginQRCodes = {
 				pluginQRCodes.libraryArguments.colorDark = color;
 			}
 
-			var size = (parseInt(items.size) + 16);
+			var size = parseInt(items.size);
 			pluginQRCodes.defaultStyleData.position = {
 				vertical : items.verticalPosition,
 				horizontal : items.horizontalPosition
