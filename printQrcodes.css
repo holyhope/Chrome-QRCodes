@@ -3,10 +3,11 @@
 	border-style: none !important;
 	cursor: move;
 	display: none;
+	height: auto !important;
 	margin: 0 !important;
 	opacity: 1 !important;
-	transition: opacity .35s ease-out !important;
-	-webkit-transition: opacity .35s ease-out !important;
+	transition: opacity .35s, width 0.35s !important;
+	-webkit-transition: opacity .35s, width 0.35s !important;
 	overflow: hidden !important;
 	position: fixed !important;
 	word-wrap: normal !important;
@@ -15,12 +16,14 @@
 
 #extension-qrcodes-qrcode:hover {
 	opacity: 0.35 !important;
-	transition: opacity .35s ease-out !important;
-	-webkit-transition: opacity .35s ease-out !important;
+	transition: opacity .35s, width 0.35s !important;
+	-webkit-transition: opacity .35s, width 0.35s !important;
 }
 
 #extension-qrcodes-qrcode img {
 	border-style: none !important;
 	margin: 0 !important;
 	padding: 0 !important;
+	width: 100% !important;
+	height: auto !important;
 }

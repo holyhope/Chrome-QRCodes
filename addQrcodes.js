@@ -1,6 +1,14 @@
 var pluginQRCodes = {
 	libraryArguments : false, // Used to create qrcodes.
 	autoDisplay : false, // True if qrcode must be shown on print.
+	maxDimension : {
+		width : 400,
+		height : 400
+	},
+	minDimension : {
+		width : 100,
+		height : 100
+	},
 	defaultStyleData : {
 		padding : 8,
 	}, // Object containing style
@@ -58,6 +66,8 @@ var pluginQRCodes = {
 		}
 		if (container.style.display == 'block') {
 			container.style.display = 'none';
+			pluginQRCodes
+					.setDimension(pluginQRCodes.defaultStyleData.dimension);
 		} else {
 			window.onbeforeprint();
 			container.style.display = 'block';
@@ -77,6 +87,31 @@ var pluginQRCodes = {
 			width : parseInt(container.style.width) + padding,
 			height : parseInt(container.style.height) + padding
 		};
+	},
+
+	/**
+	 * Set dimension for the qrcode.
+	 * 
+	 * @params {(int) width, (int) height}
+	 */
+	setDimension : function(dimension) {
+		var container = this.getContainer();
+		var padding = this.defaultStyleData.padding * 2;
+
+		if (dimension.width > this.maxDimension.width) {
+			dimension.width = this.maxDimension.width;
+		} else if (dimension.width < this.minDimension.width) {
+			dimension.width = this.minDimension.width;
+		}
+
+		if (dimension.height > this.maxDimension.height) {
+			dimension.height = this.maxDimension.height;
+		} else if (dimension.height < this.minDimension.height) {
+			dimension.height = this.minDimension.height;
+		}
+
+		container.style.width = parseInt(dimension.width - padding) + 'px';
+		container.style.height = parseInt(dimension.height - padding) + 'px';
 	},
 
 	/**
@@ -156,9 +191,15 @@ var pluginQRCodes = {
 					container.removeChild(container.firstChild);
 				}
 				// Add error message
-				var errorMessage = document.createTextNode(chrome.i18n
-						.getMessage('tooLongURL'));
-				container.appendChild(errorMessage);
+				var errorMessage = chrome.i18n.getMessage('tooLongURL');
+				var errorNode = document.createTextNode(errorMessage);
+				container.appendChild(errorNode);
+				chrome.runtime.sendMessage({
+					error : errorMessage
+				});
+				setTimeout(function() {
+					container.style.display = 'none';
+				}, 5000);
 				return;
 			}
 
@@ -222,6 +263,32 @@ var pluginQRCodes = {
 			container.addEventListener('mousedown', activeMotion);
 		}
 		container.addEventListener('mousedown', activeMotion);
+
+		var step = 10;
+		function deactiveWheel(event) {
+			if (event.movementX != 0 || event.movementY != 0) {
+				window.removeEventListener('mousemove', deactiveWheel);
+				document.body
+						.removeEventListener('mousewheel', changeDimension);
+			}
+		}
+
+		var cursorResetTimeout = false;
+		function changeDimension(event) {
+			event.preventDefault();
+			var dimension = pluginQRCodes.getDimension();
+			if (event.wheelDelta > 0) {
+				dimension.width += step;
+				dimension.height += step;
+			} else if (event.wheelDelta < 0) {
+				dimension.width -= step;
+				dimension.height -= step;
+			}
+			pluginQRCodes.setDimension(dimension);
+			document.body.addEventListener('mousewheel', changeDimension);
+			window.addEventListener('mousemove', deactiveWheel);
+		}
+		container.addEventListener('mousewheel', changeDimension);
 	},
 
 	/**
@@ -264,8 +331,8 @@ var pluginQRCodes = {
 			pluginQRCodes.autoDisplay = items.autoDisplay;
 
 			pluginQRCodes.libraryArguments = {
-				width : items.size,
-				height : items.size,
+				width : pluginQRCodes.maxDimension.width,
+				height : pluginQRCodes.maxDimension.height,
 				useSVG : true,
 				colorDark : '#' + items.color,
 				colorLight : '#ffffff',
@@ -279,11 +346,13 @@ var pluginQRCodes = {
 				pluginQRCodes.libraryArguments.colorDark = color;
 			}
 
-			var size = parseInt(items.size);
 			pluginQRCodes.defaultStyleData.position = {
 				vertical : items.verticalPosition,
 				horizontal : items.horizontalPosition
 			};
+
+			var size = parseInt(items.size)
+					+ pluginQRCodes.defaultStyleData.padding * 2;
 			pluginQRCodes.defaultStyleData.dimension = {
 				width : size,
 				height : size

@@ -26,6 +26,26 @@
 		}
 	});
 
+	function log(level, messages) {
+		console.log('[' + level + '] ' + new Date());
+		console.log(messages.join('\n'));
+	}
+
+	chrome.runtime.onMessage
+			.addListener(function(request, sender, sendResponse) {
+				if (request.error) {
+					if (sender.tab) {
+						chrome.browserAction.disable(sender.tab.id);
+					}
+					var error = [];
+					if (sender.tab) {
+						error.push(sender.tab.url);
+					}
+					error.push(request.error);
+					log('error', error);
+				}
+			});
+
 	/**
 	 * Alert user that tabs must be reloaded to work after installation.
 	 */
