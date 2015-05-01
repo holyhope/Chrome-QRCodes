@@ -5,18 +5,15 @@ Extension for Google Chrome wich add a qrcode to pages.
 # Install
 
 1. Open Chrome browser.
-2. Download zip file on [GitHub](https://github.com/holyhope/Chrome-QRCodes "Chrome-QRCodes repository")
-3. Extract it
-4. then go to [chrome://extensions/](chrome://extensions/)
-5. Activate `Developer mode`
-6. Click on `Load unpacked extension`
-7. Enjoy !
+2. Go to https://chrome.google.com/webstore/detail/qrcodes/mbbkfmdmpcjoocpfceeedkmoncmgnbim
+3. Click on *add to chrome*
+4. Enjoy !
 
 # TODO List
 
 * Add transition on display and hide qrcodes.
-* Replace alert with something better in case of long url.
 * Write a better description.
+* Add zoom button on mouse over.
 
 # Contributions
 
