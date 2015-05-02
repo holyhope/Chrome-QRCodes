@@ -3,6 +3,7 @@
 	border-style: none !important;
 	cursor: move;
 	display: none;
+	font-size: 16px;
 	height: auto !important;
 	margin: 0 !important;
 	opacity: 1 !important;
@@ -12,6 +13,7 @@
 	position: fixed !important;
 	word-wrap: normal !important;
 	z-index: 19999999999 !important;
+	height: auto !important;
 }
 
 #extension-qrcodes-qrcode:hover {
@@ -26,4 +28,8 @@
 	padding: 0 !important;
 	width: 100% !important;
 	height: auto !important;
+}
+
+#extension-qrcodes-qrcode.error {
+	color: red;
 }

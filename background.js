@@ -1,16 +1,17 @@
 (function() {
 	/**
-	 * Enable/Disable browserAction on update
+	 * Enable/Disable browserAction on update.
+	 * 
+	 * @param tabId -
+	 *            Tab identifier.
 	 */
 	function enableDisableForTab(tabId) {
 		// Test modify dom (needed for switchDisplay.js
 		chrome.tabs.executeScript(tabId, {
 			code : 'document.getElementsByTagName(\'body\').innerHTML += \'\';'
 		}, function() {
-			// Disable browserAction update if error
-			if (chrome.runtime.lastError) {
-				chrome.browserAction.disable(tabId);
-			} else {
+			// Enable browserAction if no error
+			if (!disableOnError(tabId)) {
 				chrome.browserAction.enable(tabId);
 			}
 		});
@@ -18,7 +19,7 @@
 	chrome.tabs.onUpdated.addListener(enableDisableForTab);
 
 	/**
-	 * Enable or disable for each tabs already loaded.
+	 * Enable or disable for each tabs.
 	 */
 	chrome.tabs.query({}, function(tabs) {
 		for (i in tabs) {
@@ -26,28 +27,81 @@
 		}
 	});
 
+	/**
+	 * Log messages.
+	 * 
+	 * @param level -
+	 *            level of the log (infos, notice, warning, error)
+	 * @param messages -
+	 *            Array of messages to log.
+	 */
 	function log(level, messages) {
 		console.log('[' + level + '] ' + new Date());
-		console.log(messages.join('\n'));
+
+		if (messages instanceof Array) {
+			for (index in messages) {
+				console.log(messages.join('\n'));
+			}
+		} else {
+			console.log(messages);
+		}
 	}
 
+	/**
+	 * Disable browserAction if error.
+	 * 
+	 * @return (bool) true if disabled.
+	 */
+	function disableOnError(tabId) {
+		if (chrome.runtime.lastError) {
+			log('notice', chrome.runtime.lastError.message);
+			chrome.browserAction.disable(tabId);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Receive message and disable browser action if error.
+	 * 
+	 * @param request -
+	 *            Message received.
+	 * @param sender -
+	 *            Sender of request.
+	 * @param sendResponse -
+	 *            Function to call.
+	 */
 	chrome.runtime.onMessage
 			.addListener(function(request, sender, sendResponse) {
-				if (request.error) {
+				response = {
+					action : 'none'
+				};
+				// Disable browser action
+				if (request.disable === true) {
 					if (sender.tab) {
 						chrome.browserAction.disable(sender.tab.id);
+					} else {
+						chrome.browserAction.disable();
 					}
+					response.action = 'disabled';
+				}
+				// Log message
+				if (request.log) {
 					var error = [];
 					if (sender.tab) {
 						error.push(sender.tab.url);
 					}
-					error.push(request.error);
-					log('error', error);
+					error.push(request.log.message);
+					log(request.log.level, error);
 				}
+				sendResponse(response);
 			});
 
 	/**
 	 * Alert user that tabs must be reloaded to work after installation.
+	 * 
+	 * @param details -
+	 *            Details of installation.
 	 */
 	chrome.runtime.onInstalled.addListener(function(details) {
 		switch (details.reason) {
@@ -63,19 +117,15 @@
 	/**
 	 * Display QRCode in currentTab on browserAction click. Create one if does
 	 * not exist.
+	 * 
+	 * @param tab -
+	 *            Active tab when clicked.
 	 */
 	chrome.browserAction.onClicked.addListener(function(tab) {
-		/**
-		 * Disable browserAction update if error
-		 */
-		function disableOnError() {
-			if (chrome.runtime.lastError) {
-				chrome.browserAction.disable(tab.id);
-			}
-		}
-
 		chrome.tabs.executeScript({
 			code : 'pluginQRCodes.switchDisplay();'
-		}, disableOnError);
+		}, function() {
+			disableOnError(tab.id);
+		});
 	});
 })();

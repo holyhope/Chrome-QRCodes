@@ -174,35 +174,44 @@ var pluginQRCodes = {
 		pluginQRCodes.setPosition(position);
 	},
 
+	createQrcode : function() {
+		var container = pluginQRCodes.getContainer();
+
+		this.libraryArguments.text = window.location.href;
+		try {
+			new QRCode(container, this.libraryArguments);
+		} catch (e) {
+			// Empty container
+			while (container.firstChild) {
+				container.removeChild(container.firstChild);
+			}
+			// Add error message
+			var errorMessage = chrome.i18n.getMessage('tooLongURL');
+			var errorNode = document.createTextNode(errorMessage);
+			container.className = 'error';
+			container.appendChild(errorNode);
+			setTimeout(function() {
+				container.style.display = 'none';
+			}, 5000);
+			chrome.runtime.sendMessage({
+				log : {
+					level : 'notice',
+					message : errorMessage
+				},
+				disable : true
+			}, function(response) {
+				if (chrome.runtime.lastError) {
+					console.log('[error]' + chrome.runtime.lastError.message);
+				}
+			});
+		}
+	},
+
 	/**
 	 * Set print event.
 	 */
 	initPrintEvents : function() {
-
 		var beforePrint = function() {
-			var container = pluginQRCodes.getContainer();
-
-			pluginQRCodes.libraryArguments.text = window.location.href;
-			try {
-				new QRCode(container, pluginQRCodes.libraryArguments);
-			} catch (e) {
-				// Empty container
-				while (container.firstChild) {
-					container.removeChild(container.firstChild);
-				}
-				// Add error message
-				var errorMessage = chrome.i18n.getMessage('tooLongURL');
-				var errorNode = document.createTextNode(errorMessage);
-				container.appendChild(errorNode);
-				chrome.runtime.sendMessage({
-					error : errorMessage
-				});
-				setTimeout(function() {
-					container.style.display = 'none';
-				}, 5000);
-				return;
-			}
-
 			/**
 			 * Display qrcode if autoDisplay is true.
 			 */
@@ -211,8 +220,10 @@ var pluginQRCodes = {
 					container.style.display = 'block';
 				}
 			}
-
 			window.onbeforeprint = displayIfAuto;
+
+			pluginQRCodes.createQrcode();
+
 			window.onbeforeprint();
 		};
 		window.onbeforeprint = beforePrint;

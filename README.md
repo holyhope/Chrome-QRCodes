@@ -13,7 +13,7 @@ Extension for Google Chrome wich add a qrcode to pages.
 
 * Add transition on display and hide qrcodes.
 * Write a better description.
-* Add zoom button on mouse over.
+* Add zoom button on mouse over (maybe remove opacity trick to properly dispaly buttons, or a a parent container).
 
 # Contributions
 
