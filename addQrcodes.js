@@ -110,6 +110,12 @@ var pluginQRCodes = {
 			dimension.height = this.minDimension.height;
 		}
 
+		var dimensionOld = this.getDimension();
+		var position = this.getPosition();
+		position.x += (dimensionOld.width - dimension.width) / 2;
+		position.y += (dimensionOld.width - dimension.width) / 2;
+		this.setPosition(position);
+
 		container.style.width = parseInt(dimension.width - padding) + 'px';
 		container.style.height = parseInt(dimension.height - padding) + 'px';
 	},
@@ -137,13 +143,16 @@ var pluginQRCodes = {
 	setPosition : function(position) {
 		var dimension = this.getDimension();
 
-		var widthArea = window.innerWidth;
+		// use clientWidth instead of innerWidth to remove scroll bar from
+		// calculus.
+		var widthArea = document.body.clientWidth;
 		if (position.x < 0) {
 			position.x = 0;
 		} else if (position.x + dimension.width >= widthArea) {
 			position.x = widthArea - dimension.width;
 		}
 
+		// clientHeight does not work here because, page is taller than windows
 		var heightArea = window.innerHeight;
 		if (position.y < 0) {
 			position.y = 0;
@@ -330,6 +339,15 @@ var pluginQRCodes = {
 			}, 170);
 		}
 		window.addEventListener('resize', fixPosition);
+
+		function resetQrcode() {
+			var container = pluginQRCodes.getContainer();
+			while (container.firstChild) {
+				container.removeChild(container.firstChild);
+			}
+			pluginQRCodes.createQrcode();
+		}
+		window.addEventListener('hashchange', resetQrcode, false);
 	},
 
 	/**
