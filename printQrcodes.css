@@ -1,7 +1,8 @@
 #extension-qrcodes-qrcode {
 	background-color: #FFFFFF !important;
 	border-style: none !important;
-	cursor: move;
+	box-shadow: 0px 0px 3px #444444;
+	cursor: pointer;
 	display: none;
 	font-size: 16px;
 	height: auto !important;

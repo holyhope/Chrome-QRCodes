@@ -272,6 +272,7 @@ var pluginQRCodes = {
 			container.removeEventListener('mousedown', activeMotion);
 			window.addEventListener('mousemove', pluginQRCodes.move);
 			window.addEventListener('mouseup', deactiveMotion);
+			container.style.cursor = 'move';
 		}
 		function deactiveMotion(event) {
 			// Check if it's left button
@@ -281,6 +282,7 @@ var pluginQRCodes = {
 			window.removeEventListener('mousemove', pluginQRCodes.move);
 			window.removeEventListener('mouseup', deactiveMotion);
 			container.addEventListener('mousedown', activeMotion);
+			container.style.cursor = 'pointer';
 		}
 		container.addEventListener('mousedown', activeMotion);
 
@@ -342,8 +344,8 @@ var pluginQRCodes = {
 
 		function resetQrcode() {
 			var container = pluginQRCodes.getContainer();
-			while (container.firstChild) {
-				container.removeChild(container.firstChild);
+			while (container.lastChild) {
+				container.removeChild(container.lastChild);
 			}
 			pluginQRCodes.createQrcode();
 		}
