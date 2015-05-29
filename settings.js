@@ -7,7 +7,7 @@ function pluginQRCodesgetDefaultOptions() {
 	return {
 		size : '125',
 		color : false,
-		autoDisplay : true,
+		autoDisplay : false,
 		verticalPosition : 'top',
 		horizontalPosition : 'right'
 	};

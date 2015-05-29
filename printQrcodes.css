@@ -7,30 +7,53 @@
 	font-size: 16px;
 	height: auto !important;
 	margin: 0 !important;
-	opacity: 1 !important;
-	transition: opacity .35s, width 0.35s !important;
-	-webkit-transition: opacity .35s, width 0.35s !important;
+	transition-delay: 0s !important;
+	transition-duration: .35s !important;
+	transition-property: width !important;
+	transition-timing-function: ease !important;
 	overflow: hidden !important;
 	position: fixed !important;
 	word-wrap: normal !important;
 	z-index: 19999999999 !important;
-	height: auto !important;
-}
-
-#extension-qrcodes-qrcode:hover {
-	opacity: 0.35 !important;
-	transition: opacity .35s, width 0.35s !important;
-	-webkit-transition: opacity .35s, width 0.35s !important;
 }
 
 #extension-qrcodes-qrcode img {
 	border-style: none !important;
+	height: auto !important;
 	margin: 0 !important;
 	padding: 0 !important;
 	width: 100% !important;
-	height: auto !important;
 }
 
 #extension-qrcodes-qrcode.error {
 	color: red;
+}
+
+#buttons-container {
+	position: absolute;
+	opacity: 0;
+	right: 0px;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	transition-duration: .35s !important;
+	transition-property: opacity !important;
+	transition-timing-function: ease !important;
+	transition-delay: 0s !important;
+}
+
+#extension-qrcodes-qrcode:hover #buttons-container {
+	opacity: 1;
+}
+
+#buttons-container * {
+	display: block;
+	min-height: 20px;
+	height: 10%;
+	margin: 3px;
+	font-size: 100%;
+	width: 10%;
+	min-width: 20px;
+	text-align: center;
+	float: right;
 }

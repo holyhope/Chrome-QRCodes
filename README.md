@@ -24,5 +24,5 @@ Extension for Google Chrome wich add a qrcode to pages.
 
 ## Other
 
-* Use [qrcodejs](https://github.com/davidshimjs/qrcodejs 'A qrcode maker').
-* Use [jscolor](http://jscolor.com/ 'a color picker').
+* Use [qrcodejs](https://github.com/davidshimjs/qrcodejs 'A qrcode generator').
+* Use [jscolor](http://jscolor.com/ 'A color picker').

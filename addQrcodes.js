@@ -50,6 +50,56 @@ var pluginQRCodes = {
 		container.style.height = this.defaultStyleData.dimension.height + 'px';
 		container.style.padding = this.defaultStyleData.padding + 'px';
 
+		var step = 30;
+
+		// WHere buttons will be inserted.
+		var buttonsContainer = document.createElement('div');
+		buttonsContainer.id = 'buttons-container';
+		container.appendChild(buttonsContainer);
+
+		// Add buttons
+		var zoomIn = document.createElement('input');
+		zoomIn.id = 'zoom-in';
+		zoomIn.type = 'button';
+		zoomIn.value = '+';
+		zoomIn.addEventListener('click', function() {
+			var dimension = pluginQRCodes.getDimension();
+			dimension.width += step;
+			dimension.height += step;
+
+			// Keep qrcode centered at its position.
+			/*
+			 * var dimensionOld = this.getDimension(); var position =
+			 * this.getPosition(); position.x += (dimensionOld.width -
+			 * dimension.width) / 2; position.y += (dimensionOld.width -
+			 * dimension.width) / 2; this.setPosition(position);
+			 */
+
+			pluginQRCodes.setDimension(dimension);
+		});
+		buttonsContainer.appendChild(zoomIn);
+
+		var zoomOut = document.createElement('input');
+		zoomOut.id = 'zoom-out';
+		zoomOut.type = 'button';
+		zoomOut.value = '-';
+		zoomOut.addEventListener('click', function() {
+			var dimension = pluginQRCodes.getDimension();
+			dimension.width -= step;
+			dimension.height -= step;
+
+			// Keep qrcode centered at its position.
+			/*
+			 * var dimensionOld = this.getDimension(); var position =
+			 * this.getPosition(); position.x += (dimensionOld.width -
+			 * dimension.width) / 2; position.y += (dimensionOld.width -
+			 * dimension.width) / 2; this.setPosition(position);
+			 */
+
+			pluginQRCodes.setDimension(dimension);
+		});
+		buttonsContainer.appendChild(zoomOut);
+
 		// Put qrcode in the dom.
 		document.body.appendChild(container);
 
@@ -110,11 +160,7 @@ var pluginQRCodes = {
 			dimension.height = this.minDimension.height;
 		}
 
-		var dimensionOld = this.getDimension();
-		var position = this.getPosition();
-		position.x += (dimensionOld.width - dimension.width) / 2;
-		position.y += (dimensionOld.width - dimension.width) / 2;
-		this.setPosition(position);
+		this.setPosition(this.getPosition());
 
 		container.style.width = parseInt(dimension.width - padding) + 'px';
 		container.style.height = parseInt(dimension.height - padding) + 'px';
@@ -190,6 +236,7 @@ var pluginQRCodes = {
 		try {
 			new QRCode(container, this.libraryArguments);
 		} catch (e) {
+			console.log(e);
 			// Empty container
 			while (container.firstChild) {
 				container.removeChild(container.firstChild);
@@ -286,7 +333,7 @@ var pluginQRCodes = {
 		}
 		container.addEventListener('mousedown', activeMotion);
 
-		var step = 10;
+		var step = 15;
 		function deactiveWheel(event) {
 			if (event.movementX != 0 || event.movementY != 0) {
 				window.removeEventListener('mousemove', deactiveWheel);
@@ -295,7 +342,6 @@ var pluginQRCodes = {
 			}
 		}
 
-		var cursorResetTimeout = false;
 		function changeDimension(event) {
 			event.preventDefault();
 			var dimension = pluginQRCodes.getDimension();
@@ -306,6 +352,15 @@ var pluginQRCodes = {
 				dimension.width -= step;
 				dimension.height -= step;
 			}
+
+			// Keep qrcode centered at its position.
+			/*
+			 * var dimensionOld = this.getDimension(); var position =
+			 * this.getPosition(); position.x += (dimensionOld.width -
+			 * dimension.width) / 2; position.y += (dimensionOld.width -
+			 * dimension.width) / 2; this.setPosition(position);
+			 */
+
 			pluginQRCodes.setDimension(dimension);
 			document.body.addEventListener('mousewheel', changeDimension);
 			window.addEventListener('mousemove', deactiveWheel);

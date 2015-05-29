@@ -59,6 +59,6 @@
   "activeTab",
   "<all_urls>"
  ],
- "homepage_url": "http://projects.coffeepot.fr/qrcodes/chrome",
+ "homepage_url": "http://projects.coffeepot.fr/qrcodes/?from=chrome",
  "offline_enabled": true
 }
