@@ -62,6 +62,7 @@ var pluginQRCodes = {
 		zoomIn.id = 'zoom-in';
 		zoomIn.type = 'button';
 		zoomIn.value = '+';
+		zoomIn.className = 'btn btn-default';
 		zoomIn.addEventListener('click', function() {
 			var dimension = pluginQRCodes.getDimension();
 			dimension.width += step;
@@ -83,6 +84,7 @@ var pluginQRCodes = {
 		zoomOut.id = 'zoom-out';
 		zoomOut.type = 'button';
 		zoomOut.value = '-';
+		zoomOut.className = 'btn btn-default';
 		zoomOut.addEventListener('click', function() {
 			var dimension = pluginQRCodes.getDimension();
 			dimension.width -= step;
