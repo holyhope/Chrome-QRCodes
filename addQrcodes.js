@@ -55,14 +55,27 @@ var pluginQRCodes = {
 		// WHere buttons will be inserted.
 		var buttonsContainer = document.createElement('div');
 		buttonsContainer.id = 'buttons-container';
+		buttonsContainer.className = 'btn-group-vertical';
+		buttonsContainer.style[this.defaultStyleData.position.vertical] = this.defaultStyleData.padding
+				+ 'px';
+		buttonsContainer.style[this.defaultStyleData.position.horizontal] = this.defaultStyleData.padding
+				+ 'px';
 		container.appendChild(buttonsContainer);
 
 		// Add buttons
-		var zoomIn = document.createElement('input');
+		var zoomOut = document.createElement('button');
+		zoomOut.type = 'button';
+		zoomOut.className = 'btn btn-default';
+		var zoomContent = document.createElement('span');
+		zoomContent.className = 'glyphicon';
+		zoomOut.appendChild(zoomContent);
+
+		var zoomIn = zoomOut.cloneNode(true);
 		zoomIn.id = 'zoom-in';
-		zoomIn.type = 'button';
-		zoomIn.value = '+';
-		zoomIn.className = 'btn btn-default';
+		zoomOut.id = 'zoom-out';
+		zoomIn.lastChild.className += ' glyphicon-plus';
+		zoomOut.lastChild.className += ' glyphicon-minus';
+
 		zoomIn.addEventListener('click', function() {
 			var dimension = pluginQRCodes.getDimension();
 			dimension.width += step;
@@ -78,13 +91,6 @@ var pluginQRCodes = {
 
 			pluginQRCodes.setDimension(dimension);
 		});
-		buttonsContainer.appendChild(zoomIn);
-
-		var zoomOut = document.createElement('input');
-		zoomOut.id = 'zoom-out';
-		zoomOut.type = 'button';
-		zoomOut.value = '-';
-		zoomOut.className = 'btn btn-default';
 		zoomOut.addEventListener('click', function() {
 			var dimension = pluginQRCodes.getDimension();
 			dimension.width -= step;
@@ -100,6 +106,7 @@ var pluginQRCodes = {
 
 			pluginQRCodes.setDimension(dimension);
 		});
+		buttonsContainer.appendChild(zoomIn);
 		buttonsContainer.appendChild(zoomOut);
 
 		// Put qrcode in the dom.
@@ -226,8 +233,16 @@ var pluginQRCodes = {
 		var container = pluginQRCodes.getContainer();
 
 		var position = pluginQRCodes.getPosition();
-		position.x -= event.movementX;
-		position.y += event.movementY;
+		var moveX = event.movementX;
+		if (pluginQRCodes.defaultStyleData.position.horizontal == 'right') {
+			moveX *= -1;
+		}
+		position.x += moveX;
+		var moveY = event.movementY;
+		if (pluginQRCodes.defaultStyleData.position.vertical == 'bottom') {
+			moveY *= -1;
+		}
+		position.y += moveY;
 		pluginQRCodes.setPosition(position);
 	},
 

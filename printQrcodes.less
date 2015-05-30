@@ -31,12 +31,8 @@
 }
 
 #buttons-container {
-	position: absolute;
+	position: absolute !important;
 	opacity: 0;
-	right: 0px;
-	top: 0px;
-	bottom: 0px;
-	left: 0px;
 	transition-duration: .35s !important;
 	transition-property: opacity !important;
 	transition-timing-function: ease !important;
@@ -45,8 +41,4 @@
 
 #extension-qrcodes-qrcode:hover #buttons-container {
 	opacity: 1;
-}
-
-#buttons-container * {
-	float: right;
 }
