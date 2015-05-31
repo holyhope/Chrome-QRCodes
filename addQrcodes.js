@@ -197,21 +197,21 @@ var pluginQRCodes = {
 	setPosition : function(position) {
 		var dimension = this.getDimension();
 
-		// use clientWidth instead of innerWidth to remove scroll bar from
-		// calculus.
 		if (position.x < 0) {
 			position.x = 0;
 		} else {
+			// use clientWidth instead of innerWidth to remove scroll bar width.
 			var maxWidthArea = document.body.clientWidth - dimension.width;
 			if (position.x > maxWidthArea) {
 				position.x = maxWidthArea - 1;
 			}
 		}
 
-		// clientHeight does not work here because, page is taller than windows
 		if (position.y < 0) {
 			position.y = 0;
 		} else {
+			// clientHeight does not work here because, page is taller than
+			// windows
 			var maxHeightArea = window.innerHeight - dimension.height;
 			if (position.y > maxHeightArea) {
 				position.y = maxHeightArea - 1;
