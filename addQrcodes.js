@@ -61,6 +61,10 @@ var pluginQRCodes = {
 		buttonsContainer.style[this.defaultStyleData.position.horizontal] = this.defaultStyleData.padding
 				+ 'px';
 		container.appendChild(buttonsContainer);
+		// Disable container motion with buttons.
+		buttonsContainer.addEventListener('mousedown', function(event) {
+			event.stopPropagation();
+		});
 
 		// Add buttons
 		var zoomOut = document.createElement('button');
