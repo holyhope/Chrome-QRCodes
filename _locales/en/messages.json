@@ -24,8 +24,12 @@
  },
 
  "optionTitle": {
-  "message": "QRCodes options",
+  "message": "QRCodes",
   "description": "Title of options page."
+ },
+ "optionTitleDesc": {
+  "message": "Options",
+  "description": "Description of options page."
  },
  "optionSizeLabel": {
   "message": "Size (in pixel)",
@@ -42,10 +46,6 @@
  "optionColorLabel": {
   "message": "Color",
   "description": "Label for color option."
- },
- "optionColorDefaultValue": {
-  "message": "automatic",
-  "description": "Value for automatic color (should not be a valid hexadecimal color)."
  },
  "optionColorAutomaticLabel": {
   "message": "Automatic",

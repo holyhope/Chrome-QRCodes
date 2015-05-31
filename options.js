@@ -45,7 +45,7 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 	var box = document.createElement('div');
 	box.className = 'alert alert-warning';
 	box.textContent = message;
-
+	
 	var inputsContainer = document.createElement('div');
 	inputsContainer.className = 'input-container';
 
@@ -104,7 +104,7 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 	box.appendChild(inputsContainer);
 
 	// Add div in the dom.
-	var title = document.getElementById('option-title');
+	var title = document.getElementById('title');
 	var container = title.parentNode;
 	container.insertBefore(box, title.nextSibling);
 }
@@ -185,7 +185,7 @@ function alert(waitTime, message, callback, updated) {
 	box.appendChild(inputsContainer);
 
 	// Add div in the dom.
-	var title = document.getElementById('option-title');
+	var title = document.getElementById('title');
 	var container = title.parentNode;
 	container.insertBefore(box, title.nextSibling);
 }
@@ -223,7 +223,7 @@ function updated(waitTime, message) {
 	box.appendChild(timer);
 
 	// Add div in the dom.
-	var title = document.getElementById('option-title');
+	var title = document.getElementById('title');
 	var container = title.parentNode;
 	container.insertBefore(box, title.nextSibling);
 }
@@ -394,8 +394,10 @@ function initI18nPage() {
 	// Header
 	document.getElementsByTagName('title')[0].textContent = chrome.i18n
 			.getMessage('optionTitle');
-	document.getElementById('option-title').textContent = chrome.i18n
+	document.getElementById('title-name').textContent = chrome.i18n
 			.getMessage('optionTitle');
+	document.getElementById('title-desc').textContent = chrome.i18n
+			.getMessage('optionTitleDesc');
 
 	// Settings
 	document.getElementById('size-label').textContent = chrome.i18n

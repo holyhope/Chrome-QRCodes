@@ -24,8 +24,12 @@
  },
 
  "optionTitle": {
-  "message": "Options de QRCodes",
+  "message": "QRCodes",
   "description": "Titre de la page d'option."
+ },
+ "optionTitleDesc": {
+  "message": "Options",
+  "description": "Description de la page d'option."
  },
  "optionSizeLabel": {
   "message": "Taille (en pixel)",
@@ -46,10 +50,6 @@
  "optionColorDefaultValue": {
   "message": "automatique",
   "description": "Valeur pour la couleur automatique (ne doit pas être une couleur hexadécimale valide)."
- },
- "optionColorAutomaticLabel": {
-  "message": "Automatique",
-  "description": "Intitulé du lien pour la couleur automatique."
  },
  "optionColorTooLightAlert": {
   "message": "Les qrocdes de couleur claire peuvent être illisibles.",
