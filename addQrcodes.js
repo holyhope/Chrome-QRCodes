@@ -426,7 +426,7 @@ var pluginQRCodes = {
 				width : pluginQRCodes.maxDimension.width,
 				height : pluginQRCodes.maxDimension.height,
 				useSVG : true,
-				colorDark : '#' + items.color,
+				colorDark : items.color,
 				colorLight : '#ffffff',
 				correctLevel : QRCode.CorrectLevel.H
 			};
