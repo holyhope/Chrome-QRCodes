@@ -43,7 +43,7 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 	var updateTimeInterval;
 
 	var box = document.createElement('div');
-	box.className = 'warning notices';
+	box.className = 'alert alert-warning';
 	box.textContent = message;
 
 	var inputsContainer = document.createElement('div');
@@ -57,6 +57,7 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 	function createInputYes() {
 		var inputYes = document.createElement('input');
 		inputYes.type = 'button';
+		inputYes.className = 'btn btn-primary';
 		inputYes.value = chrome.i18n.getMessage('Yes');
 
 		inputYes.addEventListener('click', function() {
@@ -75,6 +76,7 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 	function createInputNo() {
 		var inputNo = document.createElement('input');
 		inputNo.type = 'button';
+		inputNo.className = 'btn btn-default';
 
 		function updateTime() {
 			var remaining = parseInt((end - new Date().getTime()) / 1000);
@@ -102,8 +104,9 @@ function confirm(waitTime, message, callbackTrue, callbackFalse) {
 	box.appendChild(inputsContainer);
 
 	// Add div in the dom.
-	var container = document.getElementById('option-title').parentNode;
-	container.insertBefore(box, container.getElementsByClassName('block')[0]);
+	var title = document.getElementById('option-title');
+	var container = title.parentNode;
+	container.insertBefore(box, title.nextSibling);
 }
 
 /**
@@ -142,7 +145,7 @@ function alert(waitTime, message, callback, updated) {
 	var updateTimeInterval;
 
 	var box = document.createElement('div');
-	box.className = 'alert notices';
+	box.className = 'alert alert-warning';
 	box.textContent = message;
 
 	var inputsContainer = document.createElement('div');
@@ -182,8 +185,9 @@ function alert(waitTime, message, callback, updated) {
 	box.appendChild(inputsContainer);
 
 	// Add div in the dom.
-	var container = document.getElementById('option-title').parentNode;
-	container.insertBefore(box, container.getElementsByClassName('block')[0]);
+	var title = document.getElementById('option-title');
+	var container = title.parentNode;
+	container.insertBefore(box, title.nextSibling);
 }
 
 /**
@@ -198,7 +202,7 @@ function updated(waitTime, message) {
 	var updateTimeInterval;
 
 	var box = document.createElement('div');
-	box.className = 'updated notices';
+	box.className = 'alert alert-success';
 	box.textContent = message;
 
 	var timer = document.createElement('div');
@@ -219,8 +223,9 @@ function updated(waitTime, message) {
 	box.appendChild(timer);
 
 	// Add div in the dom.
-	var container = document.getElementById('option-title').parentNode;
-	container.insertBefore(box, container.getElementsByClassName('block')[0]);
+	var title = document.getElementById('option-title');
+	var container = title.parentNode;
+	container.insertBefore(box, title.nextSibling);
 }
 
 /**
@@ -237,28 +242,30 @@ function isValidHexColor(color) {
 /**
  * Calculate the average of red, green and blue in a JSColor input.
  * 
- * @param colorField -
- *            JSColor input.
+ * @param string
+ *            HexaColor - Color.
  * @returns Number between 0 and 1.
  */
-function calculateAverageJSColor(colorField) {
-	var average = colorField.color.rgb.reduce(function(a, b) {
+function calculateAverageJSColor(HexaColor) {
+	console.log(HexaColor);
+	var bigint = parseInt(HexaColor.substring(1, 7), 16);
+	var comp = [ (bigint >> 16) & 255, (bigint >> 8) & 255, bigint & 255 ];
+	var average = comp.reduce(function(a, b) {
 		return a + b;
 	}) / 3;
-	return average;
+	return average / 255;
 }
 
 /**
  * Check color on input changes.
  */
 function checkColor() {
-	var colorField = document.getElementById('color');
+	var field = document.getElementById('color');
 
 	function getErrorNodes() {
 		var errors = [];
 
-		if (isValidHexColor(colorField.value)
-				&& calculateAverageJSColor(colorField) > 0.75) {
+		if (calculateAverageJSColor(field.value) > 0.75) {
 			errors.push(document.getElementById('color-error-too-light'));
 		}
 
@@ -266,10 +273,9 @@ function checkColor() {
 	}
 
 	var errors = getErrorNodes();
-	var errorsOld = colorField.parentNode.getElementsByClassName('error');
+	var errorsOld = field.parentNode.getElementsByClassName('label');
 	for (var i = 0; i < errorsOld.length; i++) {
 		var error = errorsOld[i];
-		console.log(error);
 		if (-1 == errors.indexOf(error)) {
 			error.style.display = 'none';
 		}
@@ -279,22 +285,35 @@ function checkColor() {
 		error.style.display = 'block';
 	}
 }
-document.getElementById('color').addEventListener('change', checkColor);
+document.getElementById('color').addEventListener('input', checkColor);
 
 /**
  * Check size on input changes.
  */
 function checkSize() {
-	var error = this.parentNode.getElementsByClassName('error')[0];
-	if (typeof error == 'undefined') {
-		error = document.createElement('div');
-		error.className = 'error';
-		this.parentNode.appendChild(error);
+	var field = document.getElementById('size');
+
+	function getErrorNodes() {
+		var errors = [];
+
+		if (field.value < 80) {
+			errors.push(document.getElementById('size-error-too-small'));
+		}
+
+		return errors;
 	}
-	if (this.value < 80) {
-		error.textContent = chrome.i18n.getMessage('optionSizeTooSmallAlert');
-	} else {
-		error.textContent = '';
+
+	var errors = getErrorNodes();
+	var errorsOld = field.parentNode.getElementsByClassName('label');
+	for (var i = 0; i < errorsOld.length; i++) {
+		var error = errorsOld[i];
+		if (-1 == errors.indexOf(error)) {
+			error.style.display = 'none';
+		}
+	}
+	for (i in errors) {
+		var error = errors[i];
+		error.style.display = 'block';
 	}
 }
 document.getElementById('size').addEventListener('change', checkSize);
@@ -356,11 +375,7 @@ function getSizeValue() {
  * @returns sanitized value.
  */
 function getColorValue() {
-	var color = document.getElementById('color').value;
-	if (!isValidHexColor(color)) {
-		color = false;
-	}
-	return color;
+	return document.getElementById('color').value;
 }
 
 /**
@@ -370,16 +385,6 @@ function getColorValue() {
  */
 function getAutoDisplayValue() {
 	return document.getElementById('auto-display').checked == true;
-}
-
-/**
- * Reset color field.
- */
-function setAutomaticColor() {
-	var colorField = document.getElementById('color');
-	colorField.color.fromRGB(0, 0, 0);
-	colorField.value = chrome.i18n.getMessage('optionColorDefaultValue');
-	checkColor();
 }
 
 /**
@@ -418,34 +423,11 @@ function initI18nPage() {
 	document.getElementById('save').value = chrome.i18n
 			.getMessage('saveButton');
 }
-document.addEventListener('DOMContentLoaded', initI18nPage);
 
 /**
  * Internationalize options page.
  */
 function initDomPage() {
-	// Color input
-	var colorField = document.getElementById('color');
-	var resetColorLink = document.createElement('a');
-	resetColorLink.className = 'button';
-	resetColorLink.textContent = chrome.i18n
-			.getMessage('optionColorAutomaticLabel');
-	resetColorLink.addEventListener('click', setAutomaticColor);
-	colorField.addEventListener('click', function() {
-		this.className = 'color';
-	});
-	colorField.parentNode.appendChild(resetColorLink);
-
-	function initColor() {
-		colorField.removeEventListener('focus', initColor);
-		colorField.className = 'color';
-		colorField.color.minS = 0.5;
-		colorField.color.adjust = false;
-		colorField.color.required = false;
-		colorField.color.onImmediateChange = checkColor;
-	}
-	colorField.addEventListener('focus', initColor);
-
 	// Error messages
 	/**
 	 * Create a error box and append it in container.
@@ -460,20 +442,23 @@ function initDomPage() {
 	function addErrorNode(container, id, message) {
 		var error = document.createElement('div');
 		error.id = id;
-		error.className = 'error';
+		error.className = 'label label-danger';
 		error.textContent = message;
 		container.appendChild(error);
 	}
 	// Color errors
-	var container = document.getElementById('color').parentNode;
-	addErrorNode(container, 'color-error-too-light', chrome.i18n
-			.getMessage('optionColorTooLightAlert'));
+	addErrorNode(document.getElementById('color').parentNode,
+			'color-error-too-light', chrome.i18n
+					.getMessage('optionColorTooLightAlert'));
+	// Size errors
+	addErrorNode(document.getElementById('size').parentNode,
+			'size-error-too-small', chrome.i18n
+					.getMessage('optionSizeTooSmallAlert'));
 
 	// Control buttons
 	document.getElementById('reset').addEventListener('click', resetOptions);
 	document.getElementById('save').addEventListener('click', saveOptions);
 }
-document.addEventListener('DOMContentLoaded', initDomPage);
 
 /**
  * Restores html elements using preferences stored in chrome.storage.
@@ -486,12 +471,7 @@ function restoreOptions() {
 					function(items) {
 						// Set values.
 						document.getElementById('size').value = items.size;
-						if (items.color) {
-							document.getElementById('color').color
-									.fromString(items.color);
-						} else {
-							setAutomaticColor();
-						}
+						document.getElementById('color').value = items.color;
 						document.getElementById('auto-display').checked = items.autoDisplay;
 						document.getElementById('vertical-position').value = items.verticalPosition;
 						document.getElementById('horizontal-position').value = items.horizontalPosition;
@@ -500,12 +480,18 @@ function restoreOptions() {
 						document.getElementById('size').dispatchEvent(
 								new Event('change'));
 						document.getElementById('color').dispatchEvent(
-								new Event('change'));
+								new Event('input'));
 						document.getElementById('vertical-position')
 								.dispatchEvent(new Event('change'));
 					});
 }
-document.addEventListener('DOMContentLoaded', restoreOptions);
+
+function init() {
+	initDomPage();
+	initI18nPage();
+	restoreOptions();
+}
+document.addEventListener('DOMContentLoaded', init);
 
 /**
  * Save settings in chrome then dispaly a notice to user.

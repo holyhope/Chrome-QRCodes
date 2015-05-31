@@ -7,38 +7,49 @@
 </head>
 <body>
 	<h1 id="option-title">QRCodes options</h1>
-	<div class="block form-group">
-		<label for="auto-display" id="auto-display-label">Automatic
-			display</label> <input id="auto-display" type="checkbox" />
-	</div>
-	<div class="block form-group">
-		<label for="horizontal-position" id="horizontal-position-label">Position
-			horizontal</label> <select id="horizontal-position">
-			<option value="left" id="horizontal-position-left">left</option>
-			<option value="right" id="horizontal-position-right">right</option>
-		</select>
-	</div>
-	<div class="block form-group">
-		<label for="vertical-position" id="vertical-position-label">Position
-			vertical</label> <select id="vertical-position">
-			<option value="top" id="vertical-position-top">top</option>
-			<option value="bottom" id="vertical-position-bottom">bottom</option>
-		</select>
-	</div>
-	<div class="block form-group">
-		<label for="size" id="size-label">Size</label> <input type="number"
-			id="size" min="30" step="1" />
-	</div>
-	<div class="block form-group">
-		<label for="color" id="color-label">Color</label> <input type="text"
-			id="color" class="color" />
-	</div>
-	<div class="block form-group">
-		<input type="button" id="reset" value="Reset" /> <input type="button"
-			id="save" value="Save" />
-	</div>
+	<form class="form-horizontal">
+		<div class="form-group">
+			<label for="horizontal-position" id="horizontal-position-label"
+				class="col-sm-2 control-label">Position horizontal</label>
+			<div class="col-sm-10">
+				<select id="horizontal-position" class="form-control">
+					<option value="left" id="horizontal-position-left">left</option>
+					<option value="right" id="horizontal-position-right">right</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group row">
+			<label for="vertical-position" id="vertical-position-label"
+				class="col-sm-2 control-label">Position vertical</label>
+			<div class="col-sm-10">
+				<select id="vertical-position" class="form-control">
+					<option value="top" id="vertical-position-top">top</option>
+					<option value="bottom" id="vertical-position-bottom">bottom</option>
+				</select>
+			</div>
+		</div>
+		<div class="checkbox">
+			<label for="auto-display"><input id="auto-display"
+				type="checkbox" class="form-control" /> <span
+				id="auto-display-label">Automatic display</span></label>
+		</div>
+		<div class="form-group">
+			<label for="size" id="size-label" class="col-sm-2 control-label">Size</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="number" id="size" min="30"
+					step="1" />
+			</div>
+		</div>
+		<div class="form-group">
+			<label for="color" id="color-label" class="col-sm-2 control-label">Color</label>
+			<div class="col-sm-10">
+				<input class="form-control" type="color" id="color" />
+			</div>
+		</div>
+		<input type="button" id="reset" value="Reset" class="btn btn-default" />
+		<input type="button" id="save" value="Save" class="btn btn-primary" />
+	</form>
 
-	<script src="libraries/jscolor/jscolor.js"></script>
 	<script src="settings.js"></script>
 	<script src="options.js"></script>
 </body>
