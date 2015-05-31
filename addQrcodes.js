@@ -158,6 +158,16 @@ var pluginQRCodes = {
 			dimension.height = this.minDimension.height;
 		}
 
+		var innerWidth = window.innerWidth;
+		if (dimension.width > innerWidth) {
+			dimension.width = innerWidth - 1;
+		}
+
+		var innerHeight = window.innerHeight;
+		if (dimension.height > innerHeight) {
+			dimension.height = innerHeight - 1;
+		}
+
 		this.setPosition(this.getPosition());
 
 		container.style.width = parseInt(dimension.width - padding) + 'px';
@@ -189,19 +199,23 @@ var pluginQRCodes = {
 
 		// use clientWidth instead of innerWidth to remove scroll bar from
 		// calculus.
-		var widthArea = document.body.clientWidth;
 		if (position.x < 0) {
 			position.x = 0;
-		} else if (position.x + dimension.width >= widthArea) {
-			position.x = widthArea - dimension.width;
+		} else {
+			var maxWidthArea = document.body.clientWidth - dimension.width;
+			if (position.x > maxWidthArea) {
+				position.x = maxWidthArea - 1;
+			}
 		}
 
 		// clientHeight does not work here because, page is taller than windows
-		var heightArea = window.innerHeight;
 		if (position.y < 0) {
 			position.y = 0;
-		} else if (position.y + dimension.height >= heightArea) {
-			position.y = heightArea - dimension.height;
+		} else {
+			var maxHeightArea = window.innerHeight - dimension.height;
+			if (position.y > maxHeightArea) {
+				position.y = maxHeightArea - 1;
+			}
 		}
 
 		var container = this.getContainer();
@@ -399,6 +413,7 @@ var pluginQRCodes = {
 				innerHeight = newInnerHeight;
 
 				pluginQRCodes.setPosition(position);
+				pluginQRCodes.setDimension(dimension);
 			}, 170);
 		}
 		window.addEventListener('resize', fixPosition);
