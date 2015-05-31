@@ -14,21 +14,6 @@ var pluginQRCodes = {
 	}, // Object containing style
 
 	/**
-	 * Get color from meta node in dom.
-	 * 
-	 * @returns color or false if not exists.
-	 */
-	getMetaColor : function() {
-		var metas = document.getElementsByTagName('meta');
-		for (var i = 0; i < metas.length; i++) {
-			if (metas[i].name == 'theme-color') {
-				return metas[i].content;
-			}
-		}
-		return false;
-	},
-
-	/**
 	 * Get qrcode container in the dom. Or create one if does not exists.
 	 * 
 	 * @returns valid qrcode container.
@@ -445,13 +430,6 @@ var pluginQRCodes = {
 				colorLight : '#ffffff',
 				correctLevel : QRCode.CorrectLevel.H
 			};
-			if (!items.color) {
-				var color = pluginQRCodes.getMetaColor();
-				if (!color) {
-					color = '#000000';
-				}
-				pluginQRCodes.libraryArguments.colorDark = color;
-			}
 
 			pluginQRCodes.defaultStyleData.position = {
 				vertical : items.verticalPosition,
