@@ -203,7 +203,7 @@ var pluginQRCodes = {
 			// use clientWidth instead of innerWidth to remove scroll bar width.
 			var maxWidthArea = document.body.clientWidth - dimension.width;
 			if (position.x > maxWidthArea) {
-				position.x = maxWidthArea - 1;
+				position.x = maxWidthArea;
 			}
 		}
 
@@ -214,7 +214,7 @@ var pluginQRCodes = {
 			// windows
 			var maxHeightArea = window.innerHeight - dimension.height;
 			if (position.y > maxHeightArea) {
-				position.y = maxHeightArea - 1;
+				position.y = maxHeightArea;
 			}
 		}
 
